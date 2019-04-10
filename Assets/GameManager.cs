@@ -9,9 +9,9 @@ public class GameManager : MonoBehaviour
     private bool Player1Turn;
 
     void Start(){
-        Player1Turn = true;
+        Player1Turn = false;
 
-        InvokeRepeating("SwitchPlayerTurn", SwitchTime, SwitchTime);
+        InvokeRepeating("SwitchPlayerTurn", 0.1f, SwitchTime);
     }
 
     // Update is called once per frame

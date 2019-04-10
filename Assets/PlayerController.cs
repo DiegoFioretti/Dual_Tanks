@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private bool IsPlayer1;
     [SerializeField] private float Speed;
+    [SerializeField] private GameObject Bullet;
 
     Camera camara;
     Vector3 camarapos;
@@ -13,6 +14,9 @@ public class PlayerController : MonoBehaviour
     float camwidth;
     float camleft;
     float camright;
+
+    float shootSpeed;
+    float shootAngle;
 
     GameManager thegamemanager;
 
@@ -32,6 +36,19 @@ public class PlayerController : MonoBehaviour
                 transform.Translate(Speed * Time.deltaTime, 0 , 0);
             if (Input.GetKey(KeyCode.LeftArrow) && transform.position.x > camleft && !Input.GetKey(KeyCode.RightArrow))
                 transform.Translate(-Speed * Time.deltaTime, 0 , 0);
+            if (Input.GetKey(KeyCode.UpArrow) && !Input.GetKey(KeyCode.DownArrow)){
+                //Increase shootAngle
+            }
+            if (Input.GetKey(KeyCode.DownArrow) && !Input.GetKey(KeyCode.UpArrow)){
+                //Increase shootAngle
+            }
+            if (Input.GetKey(KeyCode.Space)){
+                //Increase shootSpeed
+            }
+            if (Input.GetKeyUp(KeyCode.Space)){
+                //Shoot bullet
+                Instantiate(Bullet, transform);
+            }
         }
     }
 }
