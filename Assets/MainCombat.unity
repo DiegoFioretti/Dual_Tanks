@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 346291028}
   m_Layer: 0
   m_Name: GameMaster
-  m_TagString: GameManager
+  m_TagString: GameMaster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -150,7 +150,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 346291027}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.741943, y: -4.06001, z: -0.017319936}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -188,6 +188,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsPlayer1: 0
   Speed: 3
+  Bullet: {fileID: 0}
 --- !u!212 &541625599
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -245,10 +246,56 @@ Transform:
   m_GameObject: {fileID: 541625597}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -8.287, y: -4.06001, z: -0.017319936}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &890558244
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 890558246}
+  - component: {fileID: 890558245}
+  m_Layer: 0
+  m_Name: Bullet
+  m_TagString: Bullet
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &890558245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 890558244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40e85e828102ffd4ca76a494d22205b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Angulodedisparo: 0
+  Velocidadinicial: 0.3
+  Gravedad: 0.01
+--- !u!4 &890558246
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 890558244}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -15.87, y: -0.91, z: -0.1484375}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &899367610
 GameObject:
@@ -282,6 +329,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsPlayer1: 1
   Speed: 3
+  Bullet: {fileID: 0}
 --- !u!212 &899367612
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -339,7 +387,7 @@ Transform:
   m_GameObject: {fileID: 899367610}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -10.741943, y: -4.06001, z: -0.017319936}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
