@@ -286,6 +286,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e85e828102ffd4ca76a494d22205b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Angulodedisparo: 1.57
+  Angulodedisparo: 2
   Velocidadinicial: 0.5
   Gravedad: 0.01

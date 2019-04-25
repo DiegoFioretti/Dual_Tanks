@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using PhysicsLibrary;
 
 public class CalculadorOblicuo : MonoBehaviour
 {
@@ -8,8 +9,10 @@ public class CalculadorOblicuo : MonoBehaviour
     [SerializeField] private float Velocidadinicial;
     [SerializeField] private float Gravedad;
 
-    private float VelocidadX;
-    private float VelocidadY;
+    private float velocidadX;
+    private float velocidadY;
+
+    private PhysicsClass customPhysics;
 
     // Observation 3.14 = 180º, so logically 1.57 is 90º, also 0 shoots to the RIGHT so 3.14 shoots LEFT
     // This is because it calculates the angles in RADIANS instead of DEGREES
@@ -17,14 +20,23 @@ public class CalculadorOblicuo : MonoBehaviour
     // degree = radian * Mathf.Rad2Deg ---> show "degree"
 
     void Start(){
-        VelocidadX = Velocidadinicial * Mathf.Cos(Angulodedisparo);
-        VelocidadY = Velocidadinicial * Mathf.Sin(Angulodedisparo) - Gravedad;
-        InvokeRepeating("ResetPosition", 1, 2);
+        customPhysics = new PhysicsClass();
+        velocidadX = customPhysics.GetStartingXSpeed(Velocidadinicial, Angulodedisparo);
+        velocidadY = customPhysics.GetStartingYSpeed(Velocidadinicial, Angulodedisparo, Gravedad);
+        //VelocidadX = Velocidadinicial * Mathf.Cos(Angulodedisparo);
+        //VelocidadY = Velocidadinicial * Mathf.Sin(Angulodedisparo) - Gravedad;
+        //InvokeRepeating("ResetPosition", 1, 3);
     }
 
     void Update(){
-        transform.Translate(VelocidadX,VelocidadY,0);
-        VelocidadY -= Gravedad;
+        transform.Translate(customPhysics.Get2DMovement());
+        //FOR TESTING ONLY
+        /*if (transform.position.y <= -5)
+        {
+            ResetPosition();
+        }*/
+        //transform.Translate(VelocidadX,VelocidadY,0);
+        //VelocidadY -= Gravedad;
     }
 
     public float ConfigurarVelocidad{
@@ -48,4 +60,15 @@ public class CalculadorOblicuo : MonoBehaviour
                 Angulodedisparo = value;
         }
     }
+    // FOR TESTING ONLY
+    /*
+    void ResetPosition()
+    {
+        transform.position = new Vector3(0, 0, -10);
+        velocidadX = customPhysics.GetStartingXSpeed(Velocidadinicial, Angulodedisparo);
+        velocidadY = customPhysics.GetStartingYSpeed(Velocidadinicial, Angulodedisparo, Gravedad);
+        Debug.Log(customPhysics.GetLocalXSpeed());
+        Debug.Log(customPhysics.GetLocalYSpeed());
+        Debug.Log(customPhysics.GetLocalGravity());
+    }*/
 }

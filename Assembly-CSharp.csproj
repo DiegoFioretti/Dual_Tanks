@@ -291,6 +291,9 @@
     <Reference Include="Unity.Analytics.Tracker">
       <HintPath>C:/Users/Administrador/Desktop/Dual_Tanks/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.Tracker.dll</HintPath>
     </Reference>
+    <Reference Include="PhysicsLibrary">
+      <HintPath>C:/Users/Administrador/Desktop/Dual_Tanks/Assets/PhysicsLibrary/PhysicsLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="netstandard">
       <HintPath>C:/Program Files/Unity/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>
     </Reference>
