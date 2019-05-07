@@ -71,4 +71,9 @@ public class CalculadorOblicuo : MonoBehaviour
         Debug.Log(customPhysics.GetLocalYSpeed());
         Debug.Log(customPhysics.GetLocalGravity());
     }*/
+
+    public void OnClash()
+    {
+        gameObject.SetActive(false);
+    }
 }

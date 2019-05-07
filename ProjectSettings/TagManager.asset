@@ -6,6 +6,7 @@ TagManager:
   tags:
   - GameMaster
   - Bullet
+  - Terrain
   layers:
   - Default
   - TransparentFX

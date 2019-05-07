@@ -12,6 +12,8 @@ namespace PhysicsLibrary
         float xSpeed;
         float localGravity;
         Vector3 auxMovement;
+        float deltaX;
+        float deltaY;
 
         public float GetStartingXSpeed(float startSpeed, float shootAngle)
         {
@@ -36,6 +38,28 @@ namespace PhysicsLibrary
             ySpeed = ySpeed - localGravity; 
         }
 
+        public bool CheckCollisionSqSq(Sprite firstSq, Sprite secondSq)
+        {
+            if (firstSq.rect.x <= secondSq.rect.x + secondSq.rect.width ||
+                firstSq.rect.x + firstSq.rect.width >= secondSq.rect.x ||
+                firstSq.rect.y <= secondSq.rect.y + secondSq.rect.height ||
+                firstSq.rect.y + firstSq.rect.height >= secondSq.rect.y)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool CheckCollisionSqCc(Sprite square, Sprite circle, float circleRadius)
+        {
+            deltaX = circle.pivot.x - ReturnMaximum(square.pivot.x, ReturnMinumum(circle.pivot.x, square.pivot.x + square.rect.width));
+            deltaY = circle.pivot.y - ReturnMaximum(square.pivot.y, ReturnMinumum(circle.pivot.y, square.pivot.y + square.rect.height));
+            return (deltaX * deltaX + deltaY * deltaY) < (circleRadius * circleRadius);
+        }
+
         public float GetLocalYSpeed()
         {
             return ySpeed;
@@ -49,6 +73,38 @@ namespace PhysicsLibrary
         public float GetLocalGravity()
         {
             return localGravity;
+        }
+
+        private float ReturnMinumum(float valueA, float valueB)
+        {
+            if (valueA < valueB)
+            {
+                return valueA;
+            }
+            else if (valueB < valueA)
+            {
+                return valueB;
+            }
+            else
+            {
+                return valueA;
+            }
+        }
+
+        private float ReturnMaximum(float valueA, float valueB)
+        {
+            if (valueA > valueB)
+            {
+                return valueA;
+            }
+            else if (valueB > valueA)
+            {
+                return valueB;
+            }
+            else
+            {
+                return valueA;
+            }
         }
     }
 }
