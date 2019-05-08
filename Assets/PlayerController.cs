@@ -71,10 +71,14 @@ public class PlayerController : MonoBehaviour
             }
             if (Input.GetKeyUp(KeyCode.Space)){
                 //Shoot bullet
-                Bullet.transform.position = transform.position;
-                Bullet.SetActive(true);
+                calculadorBullet.OnShoot(transform.position);
             }
         }
+    }
+
+    public GameObject GetBullet()
+    {
+        return Bullet;
     }
 
     public void OnClash()

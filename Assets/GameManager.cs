@@ -6,59 +6,65 @@ using PhysicsLibrary;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private float switchTime;
-    [SerializeField] private float bulletRadius;
     [SerializeField] private string playersTag;
     [SerializeField] private string bulletsTag;
     [SerializeField] private string terrainsTag;
     private bool Player1Turn;
     private PhysicsClass customCollisions;
 
-    private Sprite[] players;
-    private Sprite[] bullets;
-    private Sprite[] terrains;
+    private GameObject[] players;
+    private GameObject[] bullets;
+    private GameObject[] terrains;
 
     void Start() {
         customCollisions = new PhysicsClass();
+        if (customCollisions != null)
+        {
+            Debug.Log("collisions not null");
+        }
         Player1Turn = false;
-        GameObject[] playersGO;
-        GameObject[] bulletsGO;
-        GameObject[] terrainsGO;
-        if (players != null)
+        if (players == null)
         {
-            playersGO = GameObject.FindGameObjectsWithTag(playersTag);
-            for (int i = 0; i < playersGO.Length; i++)
-            {
-                players.SetValue(playersGO[i].GetComponent<Sprite>(), i);
-            }
+            players = GameObject.FindGameObjectsWithTag(playersTag);
         }
-        if (bullets != null)
+        if (bullets == null)
         {
-            bulletsGO = GameObject.FindGameObjectsWithTag(bulletsTag);
-            for (int j = 0; j < bulletsGO.Length; j++)
-            {
-                players.SetValue(bulletsGO[j].GetComponent<Sprite>(), j);
-            }
+            bullets = GameObject.FindGameObjectsWithTag(bulletsTag);
         }
-        if (terrains != null)
+        if (terrains == null)
         {
-            terrainsGO = GameObject.FindGameObjectsWithTag(terrainsTag);
-            for (int k = 0; k < terrainsGO.Length; k++)
-            {
-                players.SetValue(terrainsGO[k].GetComponent<Sprite>(), k);
-            }
+            terrains = GameObject.FindGameObjectsWithTag(terrainsTag);
         }
         InvokeRepeating("SwitchPlayerTurn", 0.1f, switchTime);
     }
     
     void Update()
     {
-        for (int p = 0; p < players.Length; p++)
+        for (int b = 0; b < bullets.Length; b++)
         {
-            for (int b = 0; b < bullets.Length; b++)
+            for (int p = 0; p < players.Length; p++)
             {
-                if (customCollisions.CheckCollisionSqCc(players[p],bullets[b],bulletRadius))
+                if (bullets[b] != 
+                    players[p].GetComponent<PlayerController>().GetBullet())
                 {
+                    if (customCollisions.CheckCollisionSqCc(players[p].GetComponent<Sprite>(), bullets[b].GetComponent<Sprite>(), bullets[b].GetComponent<CalculadorOblicuo>().GetRadius()))
+                    {
+                        players[p].GetComponent<PlayerController>().OnClash();
+                        bullets[b].GetComponent<CalculadorOblicuo>().OnClash();
+                    }
                     
+                }
+            }
+            if (bullets[b].activeSelf)
+            {
+                for (int t = 0; t < terrains.Length; t++)
+                {
+                    if (customCollisions.CheckCollisionSqCc(terrains[t].GetComponent<Sprite>(),
+                        bullets[b].GetComponent<Sprite>(),
+                        bullets[b].GetComponent<CalculadorOblicuo>().GetRadius()))
+                    {
+                        bullets[b].GetComponent<CalculadorOblicuo>().OnClash();
+                    }
                 }
             }
         }
@@ -73,10 +79,5 @@ public class GameManager : MonoBehaviour
 
     public bool GetIfPlayer1Turn{
         get { return Player1Turn; }
-    }
-
-    private void BulletDestruction()
-    {
-        
     }
 }

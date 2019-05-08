@@ -11,6 +11,7 @@ public class CalculadorOblicuo : MonoBehaviour
 
     private float velocidadX;
     private float velocidadY;
+    private float radius;
 
     private PhysicsClass customPhysics;
 
@@ -21,8 +22,11 @@ public class CalculadorOblicuo : MonoBehaviour
 
     void Start(){
         customPhysics = new PhysicsClass();
-        velocidadX = customPhysics.GetStartingXSpeed(Velocidadinicial, Angulodedisparo);
-        velocidadY = customPhysics.GetStartingYSpeed(Velocidadinicial, Angulodedisparo, Gravedad);
+        Sprite auxSprite = GetComponent<Sprite>();
+        radius = auxSprite.rect.width / 2;
+        gameObject.SetActive(false);
+        velocidadX = customPhysics.SetStartingXSpeed(Velocidadinicial, Angulodedisparo);
+        velocidadY = customPhysics.SetStartingYSpeed(Velocidadinicial, Angulodedisparo, Gravedad);
         //VelocidadX = Velocidadinicial * Mathf.Cos(Angulodedisparo);
         //VelocidadY = Velocidadinicial * Mathf.Sin(Angulodedisparo) - Gravedad;
         //InvokeRepeating("ResetPosition", 1, 3);
@@ -60,6 +64,11 @@ public class CalculadorOblicuo : MonoBehaviour
                 Angulodedisparo = value;
         }
     }
+
+    public float GetRadius()
+    {
+        return radius;
+    }
     // FOR TESTING ONLY
     /*
     void ResetPosition()
@@ -71,6 +80,14 @@ public class CalculadorOblicuo : MonoBehaviour
         Debug.Log(customPhysics.GetLocalYSpeed());
         Debug.Log(customPhysics.GetLocalGravity());
     }*/
+
+    public void OnShoot(Vector3 position)
+    {
+        transform.position = position;
+        velocidadX = customPhysics.SetStartingXSpeed(Velocidadinicial, Angulodedisparo);
+        velocidadY = customPhysics.SetStartingYSpeed(Velocidadinicial, Angulodedisparo, Gravedad);
+        gameObject.SetActive(true);
+    }
 
     public void OnClash()
     {

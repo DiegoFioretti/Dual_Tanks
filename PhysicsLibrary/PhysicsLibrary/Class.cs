@@ -8,29 +8,68 @@ namespace PhysicsLibrary
 {
     public class PhysicsClass
     {
+        // Variables for angled shot
         float ySpeed;
         float xSpeed;
         float localGravity;
         Vector3 auxMovement;
         float deltaX;
         float deltaY;
+        // Variables for uniformed circular motion
+        float localRadius;
+        float localRadiusTime;
+        float angularSpeed;
+        float angularAcceleration;
+        float angularDisplacement;
+        bool rotGoingRight;
+        Vector3 radialCenter;
+        Vector3 auxRadMovement;
 
-        public float GetStartingXSpeed(float startSpeed, float shootAngle)
+        public float SetStartingXSpeed(float startSpeed, float shootAngle)
         {
             return xSpeed = startSpeed * Mathf.Cos(shootAngle);
         }
 
-        public float GetStartingYSpeed(float startSpeed, float shootAngle, float gravity)
+        public float SetStartingYSpeed(float startSpeed, float shootAngle, float gravity)
         {
             localGravity = gravity;
             return ySpeed = startSpeed * Mathf.Sin(shootAngle) - gravity;
         }
 
+        public void SetStartingRadiusConstants(float radius, float time, bool goingRight)
+        {
+            localRadius = radius;
+            localRadiusTime = time;
+            rotGoingRight = goingRight;
+            angularSpeed = (2 * Mathf.PI * localRadius) / localRadiusTime;
+            if (rotGoingRight)
+            {
+                angularAcceleration = angularSpeed / (localRadiusTime * localRadiusTime);
+            }
+            else
+            {
+                angularAcceleration = -angularSpeed / (localRadiusTime * localRadiusTime);
+            }
+        }
+
+        public Vector3 SetStartingCenter(Vector3 center)
+        {
+            radialCenter = center;
+            return radialCenter;
+        }
+
         public Vector3 Get2DMovement()
         {
-            auxMovement = new Vector3(xSpeed, ySpeed, 0);
+            auxMovement.x = xSpeed;
+            auxMovement.y = ySpeed;
+            auxMovement.z = 0;
             UpdateAngledYSpeed();
             return auxMovement;
+        }
+
+        public Vector3 GetRadialMovement()
+        {
+            return auxRadMovement;
         }
         
         void UpdateAngledYSpeed()
@@ -73,6 +112,11 @@ namespace PhysicsLibrary
         public float GetLocalGravity()
         {
             return localGravity;
+        }
+
+        public float GetLocalRadius()
+        {
+            return localRadius;
         }
 
         private float ReturnMinumum(float valueA, float valueB)
