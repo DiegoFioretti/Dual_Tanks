@@ -17,12 +17,11 @@ namespace PhysicsLibrary
         float deltaY;
         // Variables for uniformed circular motion
         float localRadius;
-        float localRadiusTime;
-        float angularSpeed;
-        float angularAcceleration;
-        float angularDisplacement;
+        float circularSpeed;
+        float circularAngle;
+        float circularPeriod;
         bool rotGoingRight;
-        Vector3 radialCenter;
+        Vector3 circleCenter;
         Vector3 auxRadMovement;
 
         public float SetStartingXSpeed(float startSpeed, float shootAngle)
@@ -36,26 +35,15 @@ namespace PhysicsLibrary
             return ySpeed = startSpeed * Mathf.Sin(shootAngle) - gravity;
         }
 
-        public void SetStartingRadiusConstants(float radius, float time, bool goingRight)
+        public void SetStartingRadiusConstants(float radius, float speed, Vector3 center ,bool goingRight)
         {
             localRadius = radius;
-            localRadiusTime = time;
+            circularSpeed = speed;
+            circleCenter = center;
+            circularPeriod = (2 * Mathf.PI) / speed;
+            circularSpeed = (2 * Mathf.PI) / circularPeriod;
             rotGoingRight = goingRight;
-            angularSpeed = (2 * Mathf.PI * localRadius) / localRadiusTime;
-            if (rotGoingRight)
-            {
-                angularAcceleration = angularSpeed / (localRadiusTime * localRadiusTime);
-            }
-            else
-            {
-                angularAcceleration = -angularSpeed / (localRadiusTime * localRadiusTime);
-            }
-        }
-
-        public Vector3 SetStartingCenter(Vector3 center)
-        {
-            radialCenter = center;
-            return radialCenter;
+            circularAngle = 0;
         }
 
         public Vector3 Get2DMovement()
@@ -69,6 +57,21 @@ namespace PhysicsLibrary
 
         public Vector3 GetRadialMovement()
         {
+            if (rotGoingRight)
+            {
+                circularAngle += circularSpeed * Time.deltaTime;
+            }
+            else
+            {
+                circularAngle -= circularSpeed * Time.deltaTime;
+            }
+
+            auxRadMovement.x = Mathf.Cos(circularAngle * Mathf.Deg2Rad) * localRadius;
+            auxRadMovement.y = Mathf.Sin(circularAngle * Mathf.Deg2Rad) * localRadius;
+            auxRadMovement.z = 0;
+
+            auxRadMovement += circleCenter;
+
             return auxRadMovement;
         }
         
@@ -117,6 +120,21 @@ namespace PhysicsLibrary
         public float GetLocalRadius()
         {
             return localRadius;
+        }
+
+        public float GetCircularSpeed() {
+            return circularSpeed;
+        }
+        public float GetCircularAngle() {
+            return circularAngle;
+        }
+
+        public Vector3 GetCircleCenter() {
+            return circleCenter;
+        }
+        public Vector3 GetAuxRadMovement()
+        {
+            return auxRadMovement;
         }
 
         private float ReturnMinumum(float valueA, float valueB)
