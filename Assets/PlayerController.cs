@@ -40,34 +40,50 @@ public class PlayerController : MonoBehaviour
     void Update(){
         if (thegamemanager.GetIfPlayer1Turn == IsPlayer1){
             if (Input.GetKey(KeyCode.RightArrow) && transform.position.x < camright && !Input.GetKey(KeyCode.LeftArrow))
-                transform.Translate(Speed * Time.deltaTime, 0 , 0);
+            {
+                transform.Translate(Speed * Time.deltaTime, 0, 0);
+            }
             if (Input.GetKey(KeyCode.LeftArrow) && transform.position.x > camleft && !Input.GetKey(KeyCode.RightArrow))
-                transform.Translate(-Speed * Time.deltaTime, 0 , 0);
+            {
+                transform.Translate(-Speed * Time.deltaTime, 0, 0);
+            }
             if (Input.GetKey(KeyCode.UpArrow) && !Input.GetKey(KeyCode.DownArrow)){
                 //With 0.01 gravity its good to increment at a 0.01 rate
                 shootAngle += AngleModifyRate;
-                if (shootAngle >= 0)
-                    shootAngle = 0;
+                if (shootAngle >= 3.14)
+                {
+                    shootAngle = 3.14f;
+                }
                 calculadorBullet.ConfigurarAngulo = shootAngle;
             }
             if (Input.GetKey(KeyCode.DownArrow) && !Input.GetKey(KeyCode.UpArrow)){
                 //With 0.01 gravity its good to decrease at a 0.01 rate
                 shootAngle -= AngleModifyRate;
-                if (shootAngle >= 0)
+                if (shootAngle <= 0)
+                {
                     shootAngle = 0;
+                }
                 calculadorBullet.ConfigurarAngulo = shootAngle;
             }
             if (Input.GetKey(KeyCode.Space)){
                 //With 0.01 gravity its good to set a Max of 0.5
-                if (speedIncreasing)
-                    shootSpeed += SpeedModifyRate;
-                if (!speedIncreasing)
-                    shootSpeed -= SpeedModifyRate;
                 if (shootSpeed <= 0)
+                {
                     speedIncreasing = true;
+                }
                 if (shootSpeed >= MaxBulletSpeed)
+                {
                     speedIncreasing = false;
-                calculadorBullet.ConfigurarAngulo = shootSpeed;
+                }
+                if (speedIncreasing)
+                {
+                    shootSpeed += SpeedModifyRate;
+                }
+                if (!speedIncreasing)
+                {
+                    shootSpeed -= SpeedModifyRate;
+                }
+                calculadorBullet.ConfigurarVelocidad = shootSpeed;
             }
             if (Input.GetKeyUp(KeyCode.Space)){
                 //Shoot bullet
@@ -79,6 +95,16 @@ public class PlayerController : MonoBehaviour
     public GameObject GetBullet()
     {
         return Bullet;
+    }
+
+    public float GetAngle()
+    {
+        return shootAngle;
+    }
+
+    public float GetPower()
+    {
+        return shootSpeed;
     }
 
     public void OnClash()

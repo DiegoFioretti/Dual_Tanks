@@ -11,7 +11,6 @@ public class CalculadorOblicuo : MonoBehaviour
 
     private float velocidadX;
     private float velocidadY;
-    private float radius;
 
     private PhysicsClass customPhysics;
 
@@ -22,8 +21,6 @@ public class CalculadorOblicuo : MonoBehaviour
 
     void Start(){
         customPhysics = new PhysicsClass();
-        Sprite auxSprite = GetComponent<Sprite>();
-        radius = auxSprite.rect.width / 2;
         gameObject.SetActive(false);
         velocidadX = customPhysics.SetStartingXSpeed(Velocidadinicial, Angulodedisparo);
         velocidadY = customPhysics.SetStartingYSpeed(Velocidadinicial, Angulodedisparo, Gravedad);
@@ -64,11 +61,6 @@ public class CalculadorOblicuo : MonoBehaviour
                 Angulodedisparo = value;
         }
     }
-
-    public float GetRadius()
-    {
-        return radius;
-    }
     // FOR TESTING ONLY
     /*
     void ResetPosition()
@@ -83,14 +75,12 @@ public class CalculadorOblicuo : MonoBehaviour
 
     public void OnShoot(Vector3 position)
     {
-        transform.position = position;
-        velocidadX = customPhysics.SetStartingXSpeed(Velocidadinicial, Angulodedisparo);
-        velocidadY = customPhysics.SetStartingYSpeed(Velocidadinicial, Angulodedisparo, Gravedad);
-        gameObject.SetActive(true);
-    }
-
-    public void OnClash()
-    {
-        gameObject.SetActive(false);
+        if (!gameObject.activeSelf)
+        {
+            transform.position = position;
+            velocidadX = customPhysics.SetStartingXSpeed(Velocidadinicial, Angulodedisparo);
+            velocidadY = customPhysics.SetStartingYSpeed(Velocidadinicial, Angulodedisparo, Gravedad);
+            gameObject.SetActive(true);
+        }
     }
 }

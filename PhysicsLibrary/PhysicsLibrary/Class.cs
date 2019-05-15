@@ -13,8 +13,10 @@ namespace PhysicsLibrary
         float xSpeed;
         float localGravity;
         Vector3 auxMovement;
+        // Variables for collisions
         float deltaX;
         float deltaY;
+        float circleDistanceSquare;
         // Variables for uniformed circular motion
         float localRadius;
         float circularSpeed;
@@ -95,11 +97,17 @@ namespace PhysicsLibrary
             }
         }
 
-        public bool CheckCollisionSqCc(Sprite square, Sprite circle, float circleRadius)
+        public bool CheckCollisionSqCc(Vector2 squareCenter, Sprite square, Vector2 circleCenter, Sprite circle, float circleRadius)
         {
-            deltaX = circle.pivot.x - ReturnMaximum(square.pivot.x, ReturnMinumum(circle.pivot.x, square.pivot.x + square.rect.width));
-            deltaY = circle.pivot.y - ReturnMaximum(square.pivot.y, ReturnMinumum(circle.pivot.y, square.pivot.y + square.rect.height));
-            return (deltaX * deltaX + deltaY * deltaY) < (circleRadius * circleRadius);
+            deltaX = Mathf.Abs(circleCenter.x - squareCenter.x);
+            deltaY = Mathf.Abs(circleCenter.y - squareCenter.y);
+            if (deltaX > (square.bounds.size.x / 2 + circleRadius)) { return false; }
+            if (deltaY > (square.bounds.size.y / 2 + circleRadius)) { return false; }
+            if (deltaX <= (square.bounds.size.x / 2)) { return true; }
+            if (deltaY <= (square.bounds.size.y / 2)) { return true; }
+            circleDistanceSquare = ((deltaX - square.bounds.size.x / 2) * (deltaX - square.bounds.size.x / 2)) + ((deltaY - square.bounds.size.y / 2) * (deltaY - square.bounds.size.y / 2));
+
+            return (circleDistanceSquare <= (circleRadius * circleRadius));
         }
 
         public float GetLocalYSpeed()
@@ -135,38 +143,6 @@ namespace PhysicsLibrary
         public Vector3 GetAuxRadMovement()
         {
             return auxRadMovement;
-        }
-
-        private float ReturnMinumum(float valueA, float valueB)
-        {
-            if (valueA < valueB)
-            {
-                return valueA;
-            }
-            else if (valueB < valueA)
-            {
-                return valueB;
-            }
-            else
-            {
-                return valueA;
-            }
-        }
-
-        private float ReturnMaximum(float valueA, float valueB)
-        {
-            if (valueA > valueB)
-            {
-                return valueA;
-            }
-            else if (valueB > valueA)
-            {
-                return valueB;
-            }
-            else
-            {
-                return valueA;
-            }
         }
     }
 }
