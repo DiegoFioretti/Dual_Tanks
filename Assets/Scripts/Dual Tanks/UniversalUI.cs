@@ -46,11 +46,11 @@ public class UniversalUI : MonoBehaviour
     {
         if (gameManager.GetIfPlayer1Turn)
         {
-            selfText.text = "POWER: " + (int) PowerPercentage(player1.GetPower()) + "%";
+            selfText.text = "POWER: " + (int) PowerPercentage(player1.GetPower(), player1.GetMaxPower()) + "%";
         }
         else
         {
-            selfText.text = "POWER: " + (int) PowerPercentage(player2.GetPower()) + "%";
+            selfText.text = "POWER: " + (int) PowerPercentage(player2.GetPower(), player2.GetMaxPower()) + "%";
         }
     }
 
@@ -83,8 +83,8 @@ public class UniversalUI : MonoBehaviour
         return (angle * 180) / 3.14f;
     }
 
-    private float PowerPercentage(float power)
+    private float PowerPercentage(float power, float maxPower)
     {
-        return (power * 100) / 0.3f;
+        return (power * 100) / maxPower;
     }
 }

@@ -35,11 +35,8 @@ public class CollisionDetection : MonoBehaviour
             {
                 if (gameObject.activeSelf && customCollision.CheckCollisionSqCc(players[p].transform.position, 
                     players[p].GetComponent<SpriteRenderer>().sprite, transform.position,selfSprite, radius) && 
-                    gameObject.name != players[p].GetComponent<PlayerController>().GetBullet().name)
+                    gameObject.name != players[p].GetComponent<PlayerController>().GetBulletName())
                 {
-                    Debug.Log("Collision with player");
-                    Debug.Log(players[p].GetComponent<SpriteRenderer>().sprite.bounds.center);
-                    Debug.Log(selfSprite.bounds.center);
                     players[p].GetComponent<PlayerController>().OnClash();
                     gameObject.SetActive(false);
                     

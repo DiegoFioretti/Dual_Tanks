@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/MainCombat.unity
+- path: Assets/Scenes/TiroOblicuoTest.unity
   isLoaded: 1
   isActive: 1

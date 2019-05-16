@@ -9,10 +9,10 @@ namespace PhysicsLibrary
     public class PhysicsClass
     {
         // Variables for angled shot
-        float ySpeed;
-        float xSpeed;
-        float localGravity;
-        Vector3 auxMovement;
+        Vector3 startPosition;
+        Vector3 xyAcceleration;
+        Vector3 xySpeed;
+        Vector3 newPosition;
         // Variables for collisions
         float deltaX;
         float deltaY;
@@ -26,15 +26,15 @@ namespace PhysicsLibrary
         Vector3 circleCenter;
         Vector3 auxRadMovement;
 
-        public float SetStartingXSpeed(float startSpeed, float shootAngle)
+        public void SetStartingAngledVariables(Vector3 position,float Speed, float shootAngle, float gravity)
         {
-            return xSpeed = startSpeed * Mathf.Cos(shootAngle);
-        }
-
-        public float SetStartingYSpeed(float startSpeed, float shootAngle, float gravity)
-        {
-            localGravity = gravity;
-            return ySpeed = startSpeed * Mathf.Sin(shootAngle) - gravity;
+            xySpeed.x = Speed * Mathf.Cos(shootAngle);
+            xySpeed.y = Speed * Mathf.Sin(shootAngle);
+            xySpeed.z = 0;
+            xyAcceleration.x = 0;
+            xyAcceleration.y = -gravity;
+            xyAcceleration.z = 0;
+            startPosition = position;
         }
 
         public void SetStartingRadiusConstants(float radius, float speed, Vector3 center ,bool goingRight)
@@ -48,13 +48,14 @@ namespace PhysicsLibrary
             circularAngle = 0;
         }
 
-        public Vector3 Get2DMovement()
+        public float Get2DMovementX(float time)
         {
-            auxMovement.x = xSpeed;
-            auxMovement.y = ySpeed;
-            auxMovement.z = 0;
-            UpdateAngledYSpeed();
-            return auxMovement;
+            return newPosition.x = startPosition.x + xySpeed * time;
+        }
+
+        public float Get2DMovementY(float time)
+        {
+            return newPosition.x = startPosition.x + (1 / 2) * xyAcceleration * (time * time) + xySpeed * time;
         }
 
         public Vector3 GetRadialMovement()
@@ -77,10 +78,10 @@ namespace PhysicsLibrary
             return auxRadMovement;
         }
         
-        void UpdateAngledYSpeed()
+        /*void UpdateAngledYSpeed()
         {
             ySpeed = ySpeed - localGravity; 
-        }
+        }*/
 
         public bool CheckCollisionSqSq(Sprite firstSq, Sprite secondSq)
         {
@@ -109,7 +110,7 @@ namespace PhysicsLibrary
 
             return (circleDistanceSquare <= (circleRadius * circleRadius));
         }
-
+        /*
         public float GetLocalYSpeed()
         {
             return ySpeed;
@@ -123,7 +124,7 @@ namespace PhysicsLibrary
         public float GetLocalGravity()
         {
             return localGravity;
-        }
+        }*/
 
         public float GetLocalRadius()
         {
