@@ -10,9 +10,11 @@ namespace PhysicsLibrary
     {
         // Variables for angled shot
         Vector3 startPosition;
-        Vector3 xyAcceleration;
-        Vector3 xySpeed;
-        Vector3 newPosition;
+        float localGravity;
+        float xSpeed;
+        float ySpeed;
+        float newXPosition;
+        float newYPosition;
         // Variables for collisions
         float deltaX;
         float deltaY;
@@ -28,12 +30,9 @@ namespace PhysicsLibrary
 
         public void SetStartingAngledVariables(Vector3 position,float Speed, float shootAngle, float gravity)
         {
-            xySpeed.x = Speed * Mathf.Cos(shootAngle);
-            xySpeed.y = Speed * Mathf.Sin(shootAngle);
-            xySpeed.z = 0;
-            xyAcceleration.x = 0;
-            xyAcceleration.y = -gravity;
-            xyAcceleration.z = 0;
+            xSpeed = Speed * Mathf.Cos(shootAngle);
+            ySpeed = Speed * Mathf.Sin(shootAngle);
+            localGravity = - gravity;
             startPosition = position;
         }
 
@@ -50,12 +49,12 @@ namespace PhysicsLibrary
 
         public float Get2DMovementX(float time)
         {
-            return newPosition.x = startPosition.x + xySpeed * time;
+            return newXPosition = startPosition.x + xSpeed * time;
         }
 
         public float Get2DMovementY(float time)
         {
-            return newPosition.x = startPosition.x + (1 / 2) * xyAcceleration * (time * time) + xySpeed * time;
+            return newYPosition = startPosition.y + ySpeed * time + (1 / 2) * localGravity * (time * time) ;
         }
 
         public Vector3 GetRadialMovement()

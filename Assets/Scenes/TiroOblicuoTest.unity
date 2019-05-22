@@ -287,9 +287,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e85e828102ffd4ca76a494d22205b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shootAngle: 1.57
+  shootAngle: 0.785
   startingSpeed: 1
-  gravity: 0.5
+  gravity: 1
 --- !u!96 &676569978
 TrailRenderer:
   serializedVersion: 2

@@ -11,27 +11,34 @@ public class CalculadorOblicuo : MonoBehaviour
 
     private PhysicsClass customPhysics;
     private float startingTime;
-    //private float currentTime;
+    private float currentTime;
+    private Vector3 auxVector;
+    
     // Observation 3.14 = 180º, so logically 1.57 is 90º, also 0 shoots to the RIGHT so 3.14 shoots LEFT
     // This is because it calculates the angles in RADIANS instead of DEGREES
     // So when showing the degrees in the UI use Mathf.Rad2Deg to show the correct value
     // degree = radian * Mathf.Rad2Deg ---> show "degree"
 
     void Start(){
-        startingTime = Time.deltaTime;
         customPhysics = new PhysicsClass();
-        gameObject.SetActive(false);
+        currentTime = 0;
+        //gameObject.SetActive(false);
         customPhysics.SetStartingAngledVariables(transform.position, startingSpeed, shootAngle, gravity);
-        //velocidadX = customPhysics.SetStartingXSpeed(Velocidadinicial, Angulodedisparo);
-        //velocidadY = customPhysics.SetStartingYSpeed(Velocidadinicial, Angulodedisparo, Gravedad);
-        //VelocidadX = Velocidadinicial * Mathf.Cos(Angulodedisparo);
-        //VelocidadY = Velocidadinicial * Mathf.Sin(Angulodedisparo) - Gravedad;
-        //InvokeRepeating("ResetPosition", 1, 3);
+        auxVector.z = transform.position.z;
+        InvokeRepeating("ResetPosition", 1, 3);
+    }
+
+    private void Awake()
+    {
+        startingTime = currentTime;
     }
 
     void Update(){
-        //currentTime = startingTime + Time.deltaTime;
-        transform.position += customPhysics.Get2DMovement(startingTime + Time.deltaTime);
+        currentTime = Time.time;
+        auxVector.x = customPhysics.Get2DMovementX(currentTime - startingSpeed);
+        auxVector.y = customPhysics.Get2DMovementY(currentTime - startingSpeed);
+        Debug.Log(currentTime-startingTime);
+        transform.position = auxVector;
         //timeCounter += Time.deltaTime;
         //FOR TESTING ONLY
         /*if (transform.position.y <= -5)
@@ -64,22 +71,21 @@ public class CalculadorOblicuo : MonoBehaviour
         }
     }
     // FOR TESTING ONLY
-    /*
     void ResetPosition()
     {
-        transform.position = new Vector3(0, 0, -10);
-        velocidadX = customPhysics.GetStartingXSpeed(Velocidadinicial, Angulodedisparo);
-        velocidadY = customPhysics.GetStartingYSpeed(Velocidadinicial, Angulodedisparo, Gravedad);
-        Debug.Log(customPhysics.GetLocalXSpeed());
-        Debug.Log(customPhysics.GetLocalYSpeed());
-        Debug.Log(customPhysics.GetLocalGravity());
-    }*/
+        transform.position = new Vector3(0, 0, 0);
+        auxVector.x = transform.position.x;
+        auxVector.y = transform.position.y;
+        auxVector.z = transform.position.z;
+        startingTime = currentTime;
+        customPhysics.SetStartingAngledVariables(transform.position, startingSpeed, shootAngle, gravity);
+    }
 
     public void OnShoot(Vector3 position)
     {
         if (!gameObject.activeSelf)
         {
-            startingTime = Time.deltaTime;
+            startingTime = currentTime;
             transform.position = position;
             customPhysics.SetStartingAngledVariables(transform.position, startingSpeed, shootAngle, gravity);
             gameObject.SetActive(true);
