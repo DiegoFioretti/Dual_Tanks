@@ -306,8 +306,8 @@ MonoBehaviour:
   Speed: 3
   Bullet: {fileID: 591166194}
   AngleModifyRate: 0.05
-  SpeedModifyRate: 0.003
-  MaxBulletSpeed: 0.3
+  SpeedModifyRate: 0.5
+  MaxBulletSpeed: 10
 --- !u!1 &274311018
 GameObject:
   m_ObjectHideFlags: 0
@@ -639,9 +639,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e85e828102ffd4ca76a494d22205b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Angulodedisparo: 0
-  Velocidadinicial: 0
-  Gravedad: 0.01
+  shootAngle: 0
+  startingSpeed: 0
+  gravity: 3
 --- !u!1 &615929249
 GameObject:
   m_ObjectHideFlags: 0
@@ -1013,8 +1013,8 @@ MonoBehaviour:
   Speed: 3
   Bullet: {fileID: 1617564827}
   AngleModifyRate: 0.05
-  SpeedModifyRate: 0.003
-  MaxBulletSpeed: 0.3
+  SpeedModifyRate: 0.5
+  MaxBulletSpeed: 10
 --- !u!1 &1452089398
 GameObject:
   m_ObjectHideFlags: 0
@@ -1201,9 +1201,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e85e828102ffd4ca76a494d22205b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Angulodedisparo: 0
-  Velocidadinicial: 0
-  Gravedad: 0.01
+  shootAngle: 0
+  startingSpeed: 0
+  gravity: 3
 --- !u!1 &1713079132
 GameObject:
   m_ObjectHideFlags: 0

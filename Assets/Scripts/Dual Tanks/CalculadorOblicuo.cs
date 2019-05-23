@@ -11,7 +11,6 @@ public class CalculadorOblicuo : MonoBehaviour
 
     private PhysicsClass customPhysics;
     private float startingTime;
-    private float currentTime;
     private Vector3 auxVector;
     
     // Observation 3.14 = 180º, so logically 1.57 is 90º, also 0 shoots to the RIGHT so 3.14 shoots LEFT
@@ -21,32 +20,20 @@ public class CalculadorOblicuo : MonoBehaviour
 
     void Start(){
         customPhysics = new PhysicsClass();
-        currentTime = 0;
-        //gameObject.SetActive(false);
-        customPhysics.SetStartingAngledVariables(transform.position, startingSpeed, shootAngle, gravity);
+        gameObject.SetActive(false);
+        customPhysics.SetStartingAngledVariables(transform.position, startingSpeed, shootAngle, -gravity);
         auxVector.z = transform.position.z;
-        InvokeRepeating("ResetPosition", 1, 3);
     }
 
     private void Awake()
     {
-        startingTime = currentTime;
+        startingTime = Time.time;
     }
 
     void Update(){
-        currentTime = Time.time;
-        auxVector.x = customPhysics.Get2DMovementX(currentTime - startingSpeed);
-        auxVector.y = customPhysics.Get2DMovementY(currentTime - startingSpeed);
-        Debug.Log(currentTime-startingTime);
+        auxVector.x = customPhysics.Get2DMovementX(Time.time - startingTime);
+        auxVector.y = customPhysics.Get2DMovementY(Time.time - startingTime);
         transform.position = auxVector;
-        //timeCounter += Time.deltaTime;
-        //FOR TESTING ONLY
-        /*if (transform.position.y <= -5)
-        {
-            ResetPosition();
-        }*/
-        //transform.Translate(VelocidadX,VelocidadY,0);
-        //VelocidadY -= Gravedad;
     }
 
     public float ConfigurarVelocidad{
@@ -71,23 +58,24 @@ public class CalculadorOblicuo : MonoBehaviour
         }
     }
     // FOR TESTING ONLY
-    void ResetPosition()
+    /*void ResetPosition()
     {
         transform.position = new Vector3(0, 0, 0);
         auxVector.x = transform.position.x;
         auxVector.y = transform.position.y;
         auxVector.z = transform.position.z;
-        startingTime = currentTime;
-        customPhysics.SetStartingAngledVariables(transform.position, startingSpeed, shootAngle, gravity);
-    }
+        startingTime = Time.time;
+        customPhysics.ResetAngledVariables();
+        customPhysics.SetStartingAngledVariables(transform.position, startingSpeed, shootAngle, -gravity);
+    }*/
 
     public void OnShoot(Vector3 position)
     {
         if (!gameObject.activeSelf)
         {
-            startingTime = currentTime;
+            startingTime = Time.time;
             transform.position = position;
-            customPhysics.SetStartingAngledVariables(transform.position, startingSpeed, shootAngle, gravity);
+            customPhysics.SetStartingAngledVariables(transform.position, startingSpeed, shootAngle, -gravity);
             gameObject.SetActive(true);
         }
     }

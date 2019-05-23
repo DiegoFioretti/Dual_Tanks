@@ -19,9 +19,6 @@ public class CircularMotion : MonoBehaviour
     
     void Update()
     {
-        Debug.Log(circularMotion.GetAuxRadMovement());
-        Debug.Log(circularMotion.GetCircularAngle());
-        Debug.Log(circularMotion.GetCircularSpeed());
         transform.Translate(circularMotion.GetRadialMovement());
     }
 }

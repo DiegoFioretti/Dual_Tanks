@@ -32,8 +32,17 @@ namespace PhysicsLibrary
         {
             xSpeed = Speed * Mathf.Cos(shootAngle);
             ySpeed = Speed * Mathf.Sin(shootAngle);
-            localGravity = - gravity;
+            localGravity = gravity;
             startPosition = position;
+        }
+
+        public void ResetAngledVariables()
+        {
+            localGravity = 0;
+            xSpeed = 0;
+            ySpeed = 0;
+            newXPosition = 0;
+            newYPosition = 0;
         }
 
         public void SetStartingRadiusConstants(float radius, float speed, Vector3 center ,bool goingRight)
@@ -49,12 +58,14 @@ namespace PhysicsLibrary
 
         public float Get2DMovementX(float time)
         {
-            return newXPosition = startPosition.x + xSpeed * time;
+            newXPosition = xSpeed * time;
+            return newXPosition;
         }
 
         public float Get2DMovementY(float time)
         {
-            return newYPosition = startPosition.y + ySpeed * time + (1 / 2) * localGravity * (time * time) ;
+            newYPosition = startPosition.y + (ySpeed * time) + ((1.0f / 2.0f) * localGravity * (time * time));
+            return newYPosition;
         }
 
         public Vector3 GetRadialMovement()
@@ -76,11 +87,6 @@ namespace PhysicsLibrary
 
             return auxRadMovement;
         }
-        
-        /*void UpdateAngledYSpeed()
-        {
-            ySpeed = ySpeed - localGravity; 
-        }*/
 
         public bool CheckCollisionSqSq(Sprite firstSq, Sprite secondSq)
         {
@@ -108,41 +114,6 @@ namespace PhysicsLibrary
             circleDistanceSquare = ((deltaX - square.bounds.size.x / 2) * (deltaX - square.bounds.size.x / 2)) + ((deltaY - square.bounds.size.y / 2) * (deltaY - square.bounds.size.y / 2));
 
             return (circleDistanceSquare <= (circleRadius * circleRadius));
-        }
-        /*
-        public float GetLocalYSpeed()
-        {
-            return ySpeed;
-        }
-
-        public float GetLocalXSpeed()
-        {
-            return xSpeed;
-        }
-
-        public float GetLocalGravity()
-        {
-            return localGravity;
-        }*/
-
-        public float GetLocalRadius()
-        {
-            return localRadius;
-        }
-
-        public float GetCircularSpeed() {
-            return circularSpeed;
-        }
-        public float GetCircularAngle() {
-            return circularAngle;
-        }
-
-        public Vector3 GetCircleCenter() {
-            return circleCenter;
-        }
-        public Vector3 GetAuxRadMovement()
-        {
-            return auxRadMovement;
         }
     }
 }
