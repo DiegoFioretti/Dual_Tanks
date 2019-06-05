@@ -142,7 +142,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb9fcc0182894fd448eefc14f2fb72a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angularSpeed: 3
+  angularSpeed: 2
   yDrag: 1
   lowerYLimit: -3
   radius: 1

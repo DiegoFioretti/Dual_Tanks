@@ -28,8 +28,6 @@ namespace PhysicsLibrary
         float auxTime;
         bool goingLeft;
         bool goingRight;
-        float startCirXPosition;
-        float startCirYPosition;
         float newCircularXPosition;
         float newCircularYPosition;
 
@@ -70,14 +68,10 @@ namespace PhysicsLibrary
             {
                 inputTime = gameTime;
                 goingRight = true;
-                startCirXPosition = currentXposition;
-                startCirYPosition = currentYposition;
             }
             else if (Input.GetKeyUp(right) && goingRight == true)
             {
                 goingRight = false;
-                startCirXPosition = currentXposition;
-                startCirYPosition = currentYposition;
                 if (!goingLeft)
                 {
                     inputTime = -1;
@@ -93,14 +87,10 @@ namespace PhysicsLibrary
             {
                 inputTime = gameTime;
                 goingLeft = true;
-                startCirXPosition = currentXposition;
-                startCirYPosition = currentYposition;
             }
             else if (Input.GetKeyUp(left) && goingLeft == true)
             {
                 goingLeft = false;
-                startCirXPosition = currentXposition;
-                startCirXPosition = currentYposition;
                 if (!goingRight)
                 {
                     inputTime = -1;
@@ -120,28 +110,23 @@ namespace PhysicsLibrary
                 auxTime = inputTime;
             }
 
-            if (goingRight)
+            newCircularXPosition = currentXPosition;
+
+            if (goingRight && !goingLeft)
             {
-                newCircularXPosition = localRadius * Mathf.Cos(circularSpeed * currentTime - auxTime) + startCirXPosition;
+                newCircularXPosition = localRadius * Mathf.Cos(circularSpeed * currentTime - auxTime) + (currentXPosition + localRadius);
             }
-            else if (goingLeft)
+            else if (goingLeft && !goingRight)
             {
-                newCircularXPosition = localRadius * Mathf.Cos(-circularSpeed * currentTime - auxTime) + startCirXPosition;
+                newCircularXPosition = localRadius * - (Mathf.Cos(circularSpeed * currentTime - auxTime)) + (currentXPosition - localRadius);
             }
             else if (goingRight && goingLeft)
             {
-                newCircularXPosition = localRadius * Mathf.Cos(circularSpeed * currentTime - auxTime) + startCirXPosition;
-                newCircularXPosition += localRadius * Mathf.Cos(-circularSpeed * currentTime - auxTime) + startCirXPosition;
+                newCircularXPosition = localRadius * Mathf.Cos(circularSpeed * currentTime - auxTime) + (currentXPosition + localRadius);
+                newCircularXPosition -= localRadius * - (Mathf.Cos(circularSpeed * currentTime - auxTime)) + (currentXPosition - localRadius);
             }
 
-            if (!goingRight && !goingLeft)
-            {
-                return currentXPosition;
-            }
-            else
-            {
-                return newCircularXPosition;
-            }
+            return newCircularXPosition;
         }
 
         public float GetCircularYMovement(float currentYPosition, float currentTime)
@@ -155,14 +140,16 @@ namespace PhysicsLibrary
                 auxTime = inputTime;
             }
 
-            if (goingRight || goingLeft)
+            newCircularYPosition = currentYPosition;
+
+            if (goingRight && goingLeft)
             {
-                newCircularYPosition = localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + startCirYPosition;
+                newCircularYPosition = localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + currentYPosition;
+                newCircularYPosition += localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + currentYPosition;
             }
-            else if (goingRight && goingLeft)
+            else if (goingRight || goingLeft)
             {
-                newCircularYPosition = localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + startCirYPosition;
-                newCircularYPosition += localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + startCirYPosition;
+                newCircularYPosition = localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + currentYPosition;
             }
 
             if (currentYPosition >  lowerYLimit)
@@ -170,21 +157,7 @@ namespace PhysicsLibrary
                 newCircularYPosition -= negativeYDrag;
             }
 
-            if (!goingRight && !goingLeft)
-            {
-                if (currentYPosition > lowerYLimit)
-                {
-                    return currentYPosition -= negativeYDrag;
-                }
-                else
-                {
-                    return currentYPosition;
-                }
-            }
-            else
-            {
-                return newCircularYPosition;
-            }
+            return newCircularYPosition;
         }
         #endregion
 
