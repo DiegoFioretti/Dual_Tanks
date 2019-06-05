@@ -21,7 +21,7 @@ public class CalculadorOblicuo : MonoBehaviour
     void Start(){
         customPhysics = new PhysicsClass();
         gameObject.SetActive(false);
-        customPhysics.SetStartingAngledVariables(transform.position, startingSpeed, shootAngle, -gravity);
+        //customPhysics.SetStartingAngledVariables(transform.position, startingSpeed, shootAngle, -gravity);
         auxVector.z = transform.position.z;
     }
 
@@ -75,7 +75,8 @@ public class CalculadorOblicuo : MonoBehaviour
         {
             startingTime = Time.time;
             transform.position = position;
-            customPhysics.SetStartingAngledVariables(transform.position, startingSpeed, shootAngle, -gravity);
+            auxVector = transform.position;
+            customPhysics.SetStartingAngledVariables(position, startingSpeed, shootAngle, -gravity);
             gameObject.SetActive(true);
         }
     }

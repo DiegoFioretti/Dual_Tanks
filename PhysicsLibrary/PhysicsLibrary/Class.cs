@@ -22,12 +22,18 @@ namespace PhysicsLibrary
         // Variables for uniformed circular motion
         float localRadius;
         float circularSpeed;
-        float circularAngle;
-        float circularPeriod;
-        bool rotGoingRight;
-        Vector3 circleCenter;
-        Vector3 auxRadMovement;
+        float negativeYDrag;
+        float lowerYLimit;
+        float inputTime;
+        float auxTime;
+        bool goingLeft;
+        bool goingRight;
+        float startCirXPosition;
+        float startCirYPosition;
+        float newCircularXPosition;
+        float newCircularYPosition;
 
+        #region ANGLED MOTION FUNCTIONS
         public void SetStartingAngledVariables(Vector3 position,float Speed, float shootAngle, float gravity)
         {
             xSpeed = Speed * Mathf.Cos(shootAngle);
@@ -36,29 +42,9 @@ namespace PhysicsLibrary
             startPosition = position;
         }
 
-        public void ResetAngledVariables()
-        {
-            localGravity = 0;
-            xSpeed = 0;
-            ySpeed = 0;
-            newXPosition = 0;
-            newYPosition = 0;
-        }
-
-        public void SetStartingRadiusConstants(float radius, float speed, Vector3 center ,bool goingRight)
-        {
-            localRadius = radius;
-            circularSpeed = speed;
-            circleCenter = center;
-            circularPeriod = (2 * Mathf.PI) / speed;
-            circularSpeed = (2 * Mathf.PI) / circularPeriod;
-            rotGoingRight = goingRight;
-            circularAngle = 0;
-        }
-
         public float Get2DMovementX(float time)
         {
-            newXPosition = xSpeed * time;
+            newXPosition = startPosition.x + xSpeed * time;
             return newXPosition;
         }
 
@@ -67,33 +53,193 @@ namespace PhysicsLibrary
             newYPosition = startPosition.y + (ySpeed * time) + ((1.0f / 2.0f) * localGravity * (time * time));
             return newYPosition;
         }
+        #endregion
 
-        public Vector3 GetRadialMovement()
+        #region CIRCLE MOTION FUNCTIONS
+        public void SetStartingCircleConstants(float radius, float speed, float drag, float ylimit)
         {
-            if (rotGoingRight)
+            localRadius = radius;
+            circularSpeed = speed;
+            negativeYDrag = drag;
+            lowerYLimit = ylimit;
+        }
+
+        public void RightInput(KeyCode right, float currentXposition, float currentYposition, float gameTime)
+        {
+            if (Input.GetKeyDown(right) && goingRight != true)
             {
-                circularAngle += circularSpeed * Time.deltaTime;
+                inputTime = gameTime;
+                goingRight = true;
+                startCirXPosition = currentXposition;
+                startCirYPosition = currentYposition;
+            }
+            else if (Input.GetKeyUp(right) && goingRight == true)
+            {
+                goingRight = false;
+                startCirXPosition = currentXposition;
+                startCirYPosition = currentYposition;
+                if (!goingLeft)
+                {
+                    inputTime = -1;
+                    newCircularXPosition = currentXposition;
+                    newCircularYPosition = currentYposition;
+                }
+            }
+        }
+
+        public void LeftInput(KeyCode left, float currentXposition, float currentYposition, float gameTime)
+        {
+            if (Input.GetKeyDown(left) && goingLeft != true)
+            {
+                inputTime = gameTime;
+                goingLeft = true;
+                startCirXPosition = currentXposition;
+                startCirYPosition = currentYposition;
+            }
+            else if (Input.GetKeyUp(left) && goingLeft == true)
+            {
+                goingLeft = false;
+                startCirXPosition = currentXposition;
+                startCirXPosition = currentYposition;
+                if (!goingRight)
+                {
+                    inputTime = -1;
+                    newCircularXPosition = currentXposition;
+                    newCircularYPosition = currentYposition;
+                }
+            }
+        }
+
+        public float GetCircularXMovement(float currentXPosition, float currentTime)
+        {
+            if (inputTime < 0){
+                auxTime = currentTime;
             }
             else
             {
-                circularAngle -= circularSpeed * Time.deltaTime;
+                auxTime = inputTime;
             }
 
-            auxRadMovement.x = Mathf.Cos(circularAngle * Mathf.Deg2Rad) * localRadius;
-            auxRadMovement.y = Mathf.Sin(circularAngle * Mathf.Deg2Rad) * localRadius;
-            auxRadMovement.z = 0;
+            if (goingRight)
+            {
+                newCircularXPosition = localRadius * Mathf.Cos(circularSpeed * currentTime - auxTime) + startCirXPosition;
+            }
+            else if (goingLeft)
+            {
+                newCircularXPosition = localRadius * Mathf.Cos(-circularSpeed * currentTime - auxTime) + startCirXPosition;
+            }
+            else if (goingRight && goingLeft)
+            {
+                newCircularXPosition = localRadius * Mathf.Cos(circularSpeed * currentTime - auxTime) + startCirXPosition;
+                newCircularXPosition += localRadius * Mathf.Cos(-circularSpeed * currentTime - auxTime) + startCirXPosition;
+            }
 
-            auxRadMovement += circleCenter;
-
-            return auxRadMovement;
+            if (!goingRight && !goingLeft)
+            {
+                return currentXPosition;
+            }
+            else
+            {
+                return newCircularXPosition;
+            }
         }
 
-        public bool CheckCollisionSqSq(Sprite firstSq, Sprite secondSq)
+        public float GetCircularYMovement(float currentYPosition, float currentTime)
         {
-            if (firstSq.rect.x <= secondSq.rect.x + secondSq.rect.width ||
-                firstSq.rect.x + firstSq.rect.width >= secondSq.rect.x ||
-                firstSq.rect.y <= secondSq.rect.y + secondSq.rect.height ||
-                firstSq.rect.y + firstSq.rect.height >= secondSq.rect.y)
+            if (inputTime < 0)
+            {
+                auxTime = currentTime;
+            }
+            else
+            {
+                auxTime = inputTime;
+            }
+
+            if (goingRight || goingLeft)
+            {
+                newCircularYPosition = localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + startCirYPosition;
+            }
+            else if (goingRight && goingLeft)
+            {
+                newCircularYPosition = localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + startCirYPosition;
+                newCircularYPosition += localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + startCirYPosition;
+            }
+
+            if (currentYPosition >  lowerYLimit)
+            {
+                newCircularYPosition -= negativeYDrag;
+            }
+
+            if (!goingRight && !goingLeft)
+            {
+                if (currentYPosition > lowerYLimit)
+                {
+                    return currentYPosition -= negativeYDrag;
+                }
+                else
+                {
+                    return currentYPosition;
+                }
+            }
+            else
+            {
+                return newCircularYPosition;
+            }
+        }
+        #endregion
+
+        #region COLISION DETECTION FUNCTIONS
+        public bool CheckTopCollisionSqSq(Vector2 firstSqCenter, Sprite firstSq, Vector2 secondSqCenter, Sprite secondSq)
+        {
+            if (firstSqCenter.y + (firstSq.bounds.size.y/2) >= secondSqCenter.y - (secondSq.bounds.size.y/2))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool CheckBottomCollisionSqSq(Vector2 firstSqCenter, Sprite firstSq, Vector2 secondSqCenter, Sprite secondSq)
+        {
+            if (firstSqCenter.y - (firstSq.bounds.size.y / 2) <= secondSqCenter.y + (secondSq.bounds.size.y / 2))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool CheckLeftlCollisionSqSq(Vector2 firstSqCenter, Sprite firstSq, Vector2 secondSqCenter, Sprite secondSq)
+        {
+            if (firstSqCenter.x - (firstSq.bounds.size.x / 2) <= secondSqCenter.x + (secondSq.bounds.size.x / 2))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool CheckRightCollisionSqSq(Vector2 firstSqCenter, Sprite firstSq, Vector2 secondSqCenter, Sprite secondSq)
+        {
+            if (firstSqCenter.x + (firstSq.bounds.size.x / 2) >= secondSqCenter.x - (secondSq.bounds.size.x / 2))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool CheckGeneralCollisionSqSq(Vector2 firstSqCenter, Sprite firstSq, Vector2 secondSqCenter, Sprite secondSq)
+        {
+            if (firstSqCenter.y + (firstSq.bounds.size.y / 2) >= secondSqCenter.y - (secondSq.bounds.size.y / 2) ||
+                firstSqCenter.y - (firstSq.bounds.size.y / 2) <= secondSqCenter.y + (secondSq.bounds.size.y / 2) ||
+                firstSqCenter.x - (firstSq.bounds.size.x / 2) <= secondSqCenter.x + (secondSq.bounds.size.x / 2) ||
+                firstSqCenter.x + (firstSq.bounds.size.x / 2) >= secondSqCenter.x - (secondSq.bounds.size.x / 2))
             {
                 return true;
             }
@@ -115,5 +261,6 @@ namespace PhysicsLibrary
 
             return (circleDistanceSquare <= (circleRadius * circleRadius));
         }
+        #endregion
     }
 }
