@@ -21,13 +21,20 @@ namespace PhysicsLibrary
         float circleDistanceSquare;
         // Variables for uniformed circular motion
         float localRadius;
-        float circularSpeed;
+        float minCircularSpeed;
+        float maxCircularSpeed;
+        float circAcceleration;
+        float startRotSpeed;
+        float currentRotSpeed;
         float negativeYDrag;
         float lowerYLimit;
         float inputTime;
         float auxTime;
         bool goingLeft;
         bool goingRight;
+        float auxAcceleration;
+        float startCircXPosition;
+        float startCircYPosition;
         float newCircularXPosition;
         float newCircularYPosition;
 
@@ -54,12 +61,15 @@ namespace PhysicsLibrary
         #endregion
 
         #region CIRCLE MOTION FUNCTIONS
-        public void SetStartingCircleConstants(float radius, float speed, float drag, float ylimit)
+        public void SetStartingCircleConstants(float radius, float minspeed, float maxspeed, float acceleration, float drag, float ylimit)
         {
             localRadius = radius;
-            circularSpeed = speed;
+            minCircularSpeed = minspeed;
+            maxCircularSpeed = maxspeed;
+            circAcceleration = acceleration;
             negativeYDrag = drag;
             lowerYLimit = ylimit;
+            currentRotSpeed = 0;
         }
 
         public void RightInput(KeyCode right, float currentXposition, float currentYposition, float gameTime)
@@ -68,10 +78,16 @@ namespace PhysicsLibrary
             {
                 inputTime = gameTime;
                 goingRight = true;
+                startRotSpeed = currentRotSpeed;
+                startCircXPosition = currentXposition;
+                startCircYPosition = currentYposition;
             }
             else if (Input.GetKeyUp(right) && goingRight == true)
             {
                 goingRight = false;
+                startCircXPosition = currentXposition;
+                startCircYPosition = currentYposition;
+                startRotSpeed = currentRotSpeed;
                 if (!goingLeft)
                 {
                     inputTime = -1;
@@ -87,16 +103,46 @@ namespace PhysicsLibrary
             {
                 inputTime = gameTime;
                 goingLeft = true;
+                startRotSpeed = currentRotSpeed;
+                startCircXPosition = currentXposition;
+                startCircYPosition = currentYposition;
             }
             else if (Input.GetKeyUp(left) && goingLeft == true)
             {
                 goingLeft = false;
+                startCircXPosition = currentXposition;
+                startCircYPosition = currentYposition;
+                startRotSpeed = currentRotSpeed;
                 if (!goingRight)
                 {
                     inputTime = -1;
                     newCircularXPosition = currentXposition;
                     newCircularYPosition = currentYposition;
                 }
+            }
+        }
+
+        private void CalculateSpeed(float calcTime) {
+            if (goingLeft || goingRight)
+            {
+                currentRotSpeed = startRotSpeed + circAcceleration * calcTime;
+                auxAcceleration = circAcceleration;
+            }
+            else if (!goingLeft && !goingRight)
+            {
+                currentRotSpeed = startRotSpeed - circAcceleration * calcTime;
+                auxAcceleration = -circAcceleration;
+            }
+
+            if (currentRotSpeed > maxCircularSpeed)
+            {
+                currentRotSpeed = maxCircularSpeed;
+                auxAcceleration = 0.0f;
+            }
+            if (currentRotSpeed < minCircularSpeed)
+            {
+                currentRotSpeed = minCircularSpeed;
+                auxAcceleration = 0.0f;
             }
         }
 
@@ -110,22 +156,29 @@ namespace PhysicsLibrary
                 auxTime = inputTime;
             }
 
-            newCircularXPosition = currentXPosition;
+            //newCircularXPosition = currentXPosition;
+
+            CalculateSpeed(currentTime - auxTime); 
 
             if (goingRight && !goingLeft)
             {
-                newCircularXPosition = localRadius * Mathf.Cos(circularSpeed * currentTime - auxTime) + (currentXPosition + localRadius);
+                //newCircularXPosition = localRadius * Mathf.Cos(circularSpeed * currentTime - auxTime) + (currentXPosition + localRadius);
+                //newCircularXPosition = startCircXPosition + ((currentRotSpeed * localRadius) * Mathf.Cos(Mathf.PI / 2.0f)) * (currentTime - auxTime);
+                //newCircularXPosition
             }
             else if (goingLeft && !goingRight)
             {
-                newCircularXPosition = localRadius * - (Mathf.Cos(circularSpeed * currentTime - auxTime)) + (currentXPosition - localRadius);
+                //newCircularXPosition = localRadius * - (Mathf.Cos(circularSpeed * currentTime - auxTime)) + (currentXPosition - localRadius);
+                newCircularXPosition = startCircXPosition + ((currentRotSpeed * localRadius) * (-(Mathf.Cos(Mathf.PI / 2.0f)))) * (currentTime - auxTime);
             }
             else if (goingRight && goingLeft)
             {
-                newCircularXPosition = localRadius * Mathf.Cos(circularSpeed * currentTime - auxTime) + (currentXPosition + localRadius);
-                newCircularXPosition -= localRadius * - (Mathf.Cos(circularSpeed * currentTime - auxTime)) + (currentXPosition - localRadius);
+                //newCircularXPosition = localRadius * Mathf.Cos(circularSpeed * currentTime - auxTime) + (currentXPosition + localRadius);
+                //newCircularXPosition -= localRadius * - (Mathf.Cos(circularSpeed * currentTime - auxTime)) + (currentXPosition - localRadius);
+                newCircularXPosition = startCircXPosition + ((currentRotSpeed * localRadius) * Mathf.Cos(Mathf.PI / 2.0f)) * (currentTime - auxTime);
+                newCircularXPosition += startCircXPosition + ((currentRotSpeed * localRadius) * (-(Mathf.Cos(Mathf.PI / 2.0f)))) * (currentTime - auxTime);
             }
-
+            Debug.Log("ROT SPEED: " + currentRotSpeed);
             return newCircularXPosition;
         }
 
@@ -139,23 +192,34 @@ namespace PhysicsLibrary
             {
                 auxTime = inputTime;
             }
+            
+            CalculateSpeed(currentTime - auxTime);
 
-            newCircularYPosition = currentYPosition;
+            if (currentYPosition > lowerYLimit)
+            {
+                auxAcceleration -= negativeYDrag;
+            }
 
+            if (goingRight && !goingLeft)
+            {
+                newCircularXPosition = startCircXPosition + ((currentRotSpeed * localRadius) * Mathf.Sin(Mathf.PI / 2.0f)) * (currentTime - auxTime);
+            }
+            if (goingLeft && !goingRight)
+            {
+                newCircularXPosition = startCircXPosition + ((currentRotSpeed * localRadius) * Mathf.Sin(Mathf.PI / 2.0f)) * (currentTime - auxTime);
+            }
             if (goingRight && goingLeft)
             {
-                newCircularYPosition = localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + currentYPosition;
-                newCircularYPosition += localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + currentYPosition;
+                //newCircularYPosition = localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + currentYPosition;
+                //newCircularYPosition += localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + currentYPosition;
+                newCircularXPosition = startCircXPosition + ((currentRotSpeed * localRadius) * Mathf.Sin(Mathf.PI / 2.0f)) * (currentTime - auxTime);
+                newCircularXPosition += startCircXPosition + ((currentRotSpeed * localRadius) * Mathf.Sin(Mathf.PI / 2.0f)) * (currentTime - auxTime);
             }
-            else if (goingRight || goingLeft)
+            /*else if (goingRight || goingLeft)
             {
                 newCircularYPosition = localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + currentYPosition;
-            }
+            }*/
 
-            if (currentYPosition >  lowerYLimit)
-            {
-                newCircularYPosition -= negativeYDrag;
-            }
 
             return newCircularYPosition;
         }

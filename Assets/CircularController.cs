@@ -5,10 +5,12 @@ using PhysicsLibrary;
 
 public class CircularController : MonoBehaviour
 {
-    [SerializeField] private float angularSpeed;
+    [SerializeField] private float maxRotationSpeed;
+    [SerializeField] private float minRotationSpeed;
+    [SerializeField] private float wheelAcceleration;
     [SerializeField] private float yDrag;
     [SerializeField] private float lowerYLimit;
-    [SerializeField] private float radius;
+    [SerializeField] private float wheelRadius;
 
     PhysicsClass customController;
     Vector3 displacementVector;
@@ -37,10 +39,8 @@ public class CircularController : MonoBehaviour
 
         customController = new PhysicsClass();
 
-        customController.SetStartingCircleConstants(radius, angularSpeed, yDrag, lowerYLimit);
-        displacementVector.x = transform.position.x;
-        displacementVector.y = transform.position.y;
-        displacementVector.z = transform.position.z;
+        customController.SetStartingCircleConstants(wheelRadius, minRotationSpeed, maxRotationSpeed, wheelAcceleration, yDrag, lowerYLimit);
+        displacementVector = transform.position;
     }
     
     void Update()
@@ -57,7 +57,7 @@ public class CircularController : MonoBehaviour
         }
         if (displacementVector.x < camleft)
         {
-            displacementVector.x = camright;
+            displacementVector.x = camleft;
         }
         if (displacementVector.y > camtop)
         {

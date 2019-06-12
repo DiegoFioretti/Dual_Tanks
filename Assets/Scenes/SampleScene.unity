@@ -142,10 +142,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb9fcc0182894fd448eefc14f2fb72a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angularSpeed: 2
-  yDrag: 1
+  maxRotationSpeed: 15
+  minRotationSpeed: 0
+  wheelAcceleration: 4
+  yDrag: 0.5
   lowerYLimit: -3
-  radius: 1
+  wheelRadius: 1
 --- !u!212 &312841440
 SpriteRenderer:
   m_ObjectHideFlags: 0
