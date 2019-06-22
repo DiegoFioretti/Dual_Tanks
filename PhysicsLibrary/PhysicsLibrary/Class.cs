@@ -20,19 +20,23 @@ namespace PhysicsLibrary
         float deltaY;
         float circleDistanceSquare;
         // Variables for uniformed circular motion
-        float localRadius;
-        float minCircularSpeed;
-        float maxCircularSpeed;
-        float circAcceleration;
-        float startRotSpeed;
-        float currentRotSpeed;
+        float localWheelRadius;
+        float minWheelSpeed;
+        float maxWheelSpeed;
+        float wheelAcceleration;
+        float startWheelSpeed;
+        float currentWheelSpeed;
         float negativeYDrag;
         float lowerYLimit;
         float inputTime;
         float auxTime;
+        float auxAcceleration;
+        float rightXSpeed;
+        float rightYSpeed;
+        float leftXSpeed;
+        float leftYSpeed;
         bool goingLeft;
         bool goingRight;
-        float auxAcceleration;
         float startCircXPosition;
         float startCircYPosition;
         float newCircularXPosition;
@@ -63,13 +67,18 @@ namespace PhysicsLibrary
         #region CIRCLE MOTION FUNCTIONS
         public void SetStartingCircleConstants(float radius, float minspeed, float maxspeed, float acceleration, float drag, float ylimit)
         {
-            localRadius = radius;
-            minCircularSpeed = minspeed;
-            maxCircularSpeed = maxspeed;
-            circAcceleration = acceleration;
+            localWheelRadius = radius;
+            minWheelSpeed = minspeed;
+            maxWheelSpeed = maxspeed;
+            wheelAcceleration = acceleration;
             negativeYDrag = drag;
             lowerYLimit = ylimit;
-            currentRotSpeed = 0;
+            currentWheelSpeed = 0;
+            auxAcceleration = 0;
+            rightXSpeed = 0;
+            rightYSpeed = 0;
+            leftXSpeed = 0;
+            leftYSpeed = 0;
         }
 
         public void RightInput(KeyCode right, float currentXposition, float currentYposition, float gameTime)
@@ -78,7 +87,7 @@ namespace PhysicsLibrary
             {
                 inputTime = gameTime;
                 goingRight = true;
-                startRotSpeed = currentRotSpeed;
+                startWheelSpeed = currentWheelSpeed;
                 startCircXPosition = currentXposition;
                 startCircYPosition = currentYposition;
             }
@@ -87,10 +96,10 @@ namespace PhysicsLibrary
                 goingRight = false;
                 startCircXPosition = currentXposition;
                 startCircYPosition = currentYposition;
-                startRotSpeed = currentRotSpeed;
+                startWheelSpeed = currentWheelSpeed;
                 if (!goingLeft)
                 {
-                    inputTime = -1;
+                    inputTime = gameTime;
                     newCircularXPosition = currentXposition;
                     newCircularYPosition = currentYposition;
                 }
@@ -103,7 +112,7 @@ namespace PhysicsLibrary
             {
                 inputTime = gameTime;
                 goingLeft = true;
-                startRotSpeed = currentRotSpeed;
+                startWheelSpeed = currentWheelSpeed;
                 startCircXPosition = currentXposition;
                 startCircYPosition = currentYposition;
             }
@@ -112,10 +121,10 @@ namespace PhysicsLibrary
                 goingLeft = false;
                 startCircXPosition = currentXposition;
                 startCircYPosition = currentYposition;
-                startRotSpeed = currentRotSpeed;
+                startWheelSpeed = currentWheelSpeed;
                 if (!goingRight)
                 {
-                    inputTime = -1;
+                    inputTime = gameTime;
                     newCircularXPosition = currentXposition;
                     newCircularYPosition = currentYposition;
                 }
@@ -123,26 +132,51 @@ namespace PhysicsLibrary
         }
 
         private void CalculateSpeed(float calcTime) {
-            if (goingLeft || goingRight)
+            if (goingLeft == true || goingRight == true || (goingLeft == true && goingRight == true))
             {
-                currentRotSpeed = startRotSpeed + circAcceleration * calcTime;
-                auxAcceleration = circAcceleration;
+                currentWheelSpeed = startWheelSpeed + wheelAcceleration * calcTime;
+                auxAcceleration = wheelAcceleration;
             }
-            else if (!goingLeft && !goingRight)
+            if (goingLeft == false && goingRight == false)
             {
-                currentRotSpeed = startRotSpeed - circAcceleration * calcTime;
-                auxAcceleration = -circAcceleration;
+                currentWheelSpeed = startWheelSpeed - wheelAcceleration * calcTime;
+                auxAcceleration = - wheelAcceleration;
             }
 
-            if (currentRotSpeed > maxCircularSpeed)
+            if (currentWheelSpeed >= maxWheelSpeed && (goingLeft == true || goingRight == true))
             {
-                currentRotSpeed = maxCircularSpeed;
+                currentWheelSpeed = maxWheelSpeed;
                 auxAcceleration = 0.0f;
             }
-            if (currentRotSpeed < minCircularSpeed)
+            if (currentWheelSpeed <= minWheelSpeed && (goingLeft == false && goingRight == false))
             {
-                currentRotSpeed = minCircularSpeed;
+                currentWheelSpeed = minWheelSpeed;
                 auxAcceleration = 0.0f;
+            }
+
+            Debug.Log("Current wheel speed: " + currentWheelSpeed);
+            Debug.Log("Current Wheel Acceleration: " + auxAcceleration);
+
+            if (goingRight == true)
+            {
+                rightXSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
+                rightYSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
+            }
+            else if (goingRight == false)
+            {
+                rightXSpeed = 0.0f;
+                rightYSpeed = 0.0f;
+            }
+
+            if (goingLeft == true)
+            {
+                leftXSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
+                leftYSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
+            }
+            else if (goingLeft == false)
+            {
+                leftXSpeed = 0.0f;
+                leftYSpeed = 0.0f;
             }
         }
 
@@ -155,30 +189,11 @@ namespace PhysicsLibrary
             {
                 auxTime = inputTime;
             }
+            
+            CalculateSpeed(currentTime - auxTime);
 
-            //newCircularXPosition = currentXPosition;
-
-            CalculateSpeed(currentTime - auxTime); 
-
-            if (goingRight && !goingLeft)
-            {
-                //newCircularXPosition = localRadius * Mathf.Cos(circularSpeed * currentTime - auxTime) + (currentXPosition + localRadius);
-                //newCircularXPosition = startCircXPosition + ((currentRotSpeed * localRadius) * Mathf.Cos(Mathf.PI / 2.0f)) * (currentTime - auxTime);
-                //newCircularXPosition
-            }
-            else if (goingLeft && !goingRight)
-            {
-                //newCircularXPosition = localRadius * - (Mathf.Cos(circularSpeed * currentTime - auxTime)) + (currentXPosition - localRadius);
-                newCircularXPosition = startCircXPosition + ((currentRotSpeed * localRadius) * (-(Mathf.Cos(Mathf.PI / 2.0f)))) * (currentTime - auxTime);
-            }
-            else if (goingRight && goingLeft)
-            {
-                //newCircularXPosition = localRadius * Mathf.Cos(circularSpeed * currentTime - auxTime) + (currentXPosition + localRadius);
-                //newCircularXPosition -= localRadius * - (Mathf.Cos(circularSpeed * currentTime - auxTime)) + (currentXPosition - localRadius);
-                newCircularXPosition = startCircXPosition + ((currentRotSpeed * localRadius) * Mathf.Cos(Mathf.PI / 2.0f)) * (currentTime - auxTime);
-                newCircularXPosition += startCircXPosition + ((currentRotSpeed * localRadius) * (-(Mathf.Cos(Mathf.PI / 2.0f)))) * (currentTime - auxTime);
-            }
-            Debug.Log("ROT SPEED: " + currentRotSpeed);
+            newCircularXPosition = startCircXPosition + ((rightXSpeed + leftXSpeed) * (currentTime - auxTime)) + ((1.0f / 2.0f) * auxAcceleration * ((currentTime - auxTime) * (currentTime - auxTime)));
+            
             return newCircularXPosition;
         }
 
@@ -195,31 +210,19 @@ namespace PhysicsLibrary
             
             CalculateSpeed(currentTime - auxTime);
 
-            if (currentYPosition > lowerYLimit)
+            if (currentYPosition >= lowerYLimit)
             {
                 auxAcceleration -= negativeYDrag;
             }
-
-            if (goingRight && !goingLeft)
+            
+            if (currentYPosition <= lowerYLimit)
             {
-                newCircularXPosition = startCircXPosition + ((currentRotSpeed * localRadius) * Mathf.Sin(Mathf.PI / 2.0f)) * (currentTime - auxTime);
+                newCircularYPosition = lowerYLimit + 0.001f;
             }
-            if (goingLeft && !goingRight)
+            else
             {
-                newCircularXPosition = startCircXPosition + ((currentRotSpeed * localRadius) * Mathf.Sin(Mathf.PI / 2.0f)) * (currentTime - auxTime);
+                newCircularYPosition = startCircYPosition + ((rightYSpeed + leftYSpeed) * (currentTime - auxTime)) + ((1.0f / 2.0f) * auxAcceleration * ((currentTime - auxTime) * (currentTime - auxTime)));
             }
-            if (goingRight && goingLeft)
-            {
-                //newCircularYPosition = localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + currentYPosition;
-                //newCircularYPosition += localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + currentYPosition;
-                newCircularXPosition = startCircXPosition + ((currentRotSpeed * localRadius) * Mathf.Sin(Mathf.PI / 2.0f)) * (currentTime - auxTime);
-                newCircularXPosition += startCircXPosition + ((currentRotSpeed * localRadius) * Mathf.Sin(Mathf.PI / 2.0f)) * (currentTime - auxTime);
-            }
-            /*else if (goingRight || goingLeft)
-            {
-                newCircularYPosition = localRadius * Mathf.Sin(circularSpeed * currentTime - auxTime) + currentYPosition;
-            }*/
-
 
             return newCircularYPosition;
         }
