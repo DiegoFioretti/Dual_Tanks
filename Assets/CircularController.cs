@@ -63,9 +63,9 @@ public class CircularController : MonoBehaviour
         {
             displacementVector.y = camtop;
         }
-        if (displacementVector.y < cambottom)
+        if (displacementVector.y < lowerYLimit)
         {
-            displacementVector.y = cambottom;
+            displacementVector.y = lowerYLimit;
         }
 
         transform.position = displacementVector;
