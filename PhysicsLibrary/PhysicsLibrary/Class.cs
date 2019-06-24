@@ -149,63 +149,69 @@ namespace PhysicsLibrary
             if (goingLeft == false && goingRight == false)
             {
                 currentWheelSpeed = startWheelSpeed - wheelAcceleration * calcTime;
-                currentWheelAcceleration = - wheelAcceleration;
             }
 
             if (currentWheelSpeed > maxWheelSpeed)
             {
                 currentWheelSpeed = maxWheelSpeed;
-                currentWheelAcceleration = 0.0f;
             }
             if (currentWheelSpeed < minWheelSpeed)
             {
                 currentWheelSpeed = minWheelSpeed;
-                currentWheelAcceleration = 0.0f;
             }
 
             /*rightXAccel = currentWheelAcceleration * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
             rightYAccel = currentWheelAcceleration * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
 
             leftXAccel = currentWheelAcceleration * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
-            leftYAccel = currentWheelAcceleration * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
+            leftYAccel = currentWheelAcceleration * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);*/
 
             rightXSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
             rightYSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
 
             leftXSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
-            leftYSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);*/
+            leftYSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
+
             if (goingRight == true)
             {
-                rightXSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
-                rightYSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
-                if (true)
+                rightXAccel = wheelAcceleration * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
+                rightYAccel = wheelAcceleration * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
+                if (currentWheelSpeed > maxWheelSpeed)
                 {
-
+                    rightXAccel = 0.0f * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
+                    rightYAccel = 0.0f * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
                 }
-                rightXAccel = currentWheelAcceleration * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
-                rightYAccel = currentWheelAcceleration * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
             }
             else if (goingRight == false)
             {
-                rightXSpeed = 0.0f;
-                rightYSpeed = 0.0f;
-                rightXAccel = 0.0f;
-                rightYAccel = 0.0f;
+                rightXAccel = - (wheelAcceleration * Mathf.Cos(Mathf.PI * 1.0f / 4.0f));
+                rightYAccel = - (wheelAcceleration * Mathf.Sin(Mathf.PI * 1.0f / 4.0f));
+                if (currentWheelSpeed < minWheelSpeed)
+                {
+                    rightXAccel = 0.0f * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
+                    rightYAccel = 0.0f * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
+                }
             }
 
             if (goingLeft == true)
             {
-                leftXSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
-                leftYSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
                 leftXAccel = wheelAcceleration * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
                 leftYAccel = wheelAcceleration * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
+                if (currentWheelSpeed > maxWheelSpeed)
+                {
+                    leftXAccel = 0.0f * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
+                    leftYAccel = 0.0f * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
+                }
             }
             else if (goingLeft == false)
             {
-                leftXSpeed = 0.0f;
-                leftYSpeed = 0.0f;
-                leftXAccel = 0.0f;
-                leftYAccel = 0.0f;
+                leftXAccel = - (wheelAcceleration * Mathf.Cos(Mathf.PI * 3.0f / 4.0f));
+                leftYAccel = - (wheelAcceleration * Mathf.Sin(Mathf.PI * 3.0f / 4.0f));
+                if (currentWheelSpeed < minWheelSpeed)
+                {
+                    leftXAccel = 0.0f * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
+                    leftYAccel = 0.0f * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
+                }
             }
         }
 
