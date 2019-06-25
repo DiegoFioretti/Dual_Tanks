@@ -30,7 +30,6 @@ namespace PhysicsLibrary
         float negativeYDrag;
         float lowerYLimit;
         float inputTime;
-        float auxTime;
         float rightXAccel;
         float rightYAccel;
         float leftXAccel;
@@ -105,12 +104,6 @@ namespace PhysicsLibrary
                 startCircXPosition = currentXposition;
                 startCircYPosition = currentYposition;
                 startWheelSpeed = currentWheelSpeed;
-                if (!goingLeft)
-                {
-                    //inputTime = gameTime;
-                    newCircularXPosition = currentXposition;
-                    newCircularYPosition = currentYposition;
-                }
             }
         }
 
@@ -131,24 +124,18 @@ namespace PhysicsLibrary
                 startCircXPosition = currentXposition;
                 startCircYPosition = currentYposition;
                 startWheelSpeed = currentWheelSpeed;
-                if (!goingRight)
-                {
-                    //inputTime = gameTime;
-                    newCircularXPosition = currentXposition;
-                    newCircularYPosition = currentYposition;
-                }
             }
         }
 
-        private void CalculateSpeed(float calcTime) {
+        public void CalculateSpeed(float currentTime) {
             if (goingLeft == true || goingRight == true)
             {
-                currentWheelSpeed = startWheelSpeed + wheelAcceleration * calcTime;
+                currentWheelSpeed = startWheelSpeed + wheelAcceleration * (currentTime - inputTime);
                 currentWheelAcceleration = wheelAcceleration;
             }
             if (goingLeft == false && goingRight == false)
             {
-                currentWheelSpeed = startWheelSpeed - wheelAcceleration * calcTime;
+                currentWheelSpeed = startWheelSpeed - wheelAcceleration * (currentTime - inputTime);
             }
 
             if (currentWheelSpeed > maxWheelSpeed)
@@ -159,12 +146,6 @@ namespace PhysicsLibrary
             {
                 currentWheelSpeed = minWheelSpeed;
             }
-
-            /*rightXAccel = currentWheelAcceleration * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
-            rightYAccel = currentWheelAcceleration * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
-
-            leftXAccel = currentWheelAcceleration * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
-            leftYAccel = currentWheelAcceleration * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);*/
 
             rightXSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
             rightYSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
@@ -217,46 +198,20 @@ namespace PhysicsLibrary
 
         public float GetCircularXMovement(float currentXPosition, float currentTime)
         {
-            if (inputTime < 0){
-                auxTime = currentTime;
-            }
-            else
-            {
-                auxTime = inputTime;
-            }
-            
-            CalculateSpeed(currentTime - auxTime);
-
-            newCircularXPosition = startCircXPosition + ((rightXSpeed + leftXSpeed) * (currentTime - auxTime)) + ((1.0f / 2.0f) * (rightXAccel + leftXAccel) * ((currentTime - auxTime) * (currentTime - auxTime)));
+            newCircularXPosition = startCircXPosition + ((rightXSpeed + leftXSpeed) * (currentTime - inputTime)) + ((1.0f / 2.0f) * (rightXAccel + leftXAccel) * ((currentTime - inputTime) * (currentTime - inputTime)));
             
             return newCircularXPosition;
         }
 
         public float GetCircularYMovement(float currentYPosition, float currentTime)
         {
-            if (inputTime < 0)
-            {
-                auxTime = currentTime;
-            }
-            else
-            {
-                auxTime = inputTime;
-            }
-            
-            CalculateSpeed(currentTime - auxTime);
-
-            //if (rightYSpeed == 0.0f && leftYSpeed == 0.0f)
-            //{
-            //    startCircYPosition = currentYPosition;
-            //}
-
             if (currentYPosition >= lowerYLimit)
             {
-                leftYAccel -= negativeYDrag;
-                rightYAccel -= negativeYDrag;
+                rightYAccel -= negativeYDrag * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
+                leftYAccel -= negativeYDrag * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
             }
 
-            newCircularYPosition = startCircYPosition + ((rightYSpeed + leftYSpeed) * (currentTime - auxTime)) + ((1.0f / 2.0f) * (rightYAccel + leftYAccel) * ((currentTime - auxTime) * (currentTime - auxTime)));
+            newCircularYPosition = startCircYPosition + ((rightYSpeed + leftYSpeed) * (currentTime - inputTime)) + ((1.0f / 2.0f) * (rightYAccel + leftYAccel) * ((currentTime - inputTime) * (currentTime - inputTime)));
 
             return newCircularYPosition;
         }

@@ -47,7 +47,7 @@ public class CircularController : MonoBehaviour
     {
         customController.LeftInput(KeyCode.LeftArrow, transform.position.x, transform.position.y, Time.time);
         customController.RightInput(KeyCode.RightArrow, transform.position.x, transform.position.y, Time.time);
-
+        customController.CalculateSpeed(Time.time);
         displacementVector.x = customController.GetCircularXMovement(transform.position.x, Time.time);
         displacementVector.y = customController.GetCircularYMovement(transform.position.y, Time.time);
 
