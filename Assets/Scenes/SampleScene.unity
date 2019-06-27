@@ -142,12 +142,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb9fcc0182894fd448eefc14f2fb72a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxRotationSpeed: 5
+  maxRotationSpeed: 3
   minRotationSpeed: 0
   wheelAcceleration: 5
   yDrag: 0.1
   lowerYLimit: -3
-  wheelRadius: 0.5
+  wheelRadius: 0.1
 --- !u!212 &312841440
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -204,7 +204,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 312841438}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.09, y: -0.09, z: 0}
+  m_LocalPosition: {x: 0.09, y: 4.64, z: 0}
   m_LocalScale: {x: 0.1, y: 0.2, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -286,7 +286,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
