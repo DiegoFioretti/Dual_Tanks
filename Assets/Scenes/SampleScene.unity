@@ -144,8 +144,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxRotationSpeed: 3
   minRotationSpeed: 0
-  wheelAcceleration: 7
-  yDrag: 8
+  maxWheelAcceleration: 3
+  minWheelAcceleration: -3
+  wheelAccelModifier: 0.1
   lowerYLimit: -3
   wheelRadius: 0.1
 --- !u!212 &312841440

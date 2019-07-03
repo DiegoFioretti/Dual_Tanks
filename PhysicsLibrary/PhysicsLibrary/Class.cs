@@ -23,11 +23,17 @@ namespace PhysicsLibrary
         float localWheelRadius;
         float minWheelSpeed;
         float maxWheelSpeed;
-        float wheelAcceleration;
-        float currentWheelAcceleration;
-        float startWheelSpeed;
-        float currentWheelSpeed;
-        float negativeYDrag;
+        float minWheelAcceleration;
+        float maxWheelAcceleration;
+        float wheelAccelerationMod;
+        // Right/Left differenciators
+        float startRightWheelSpeed;
+        float currentRightWheelAccel;
+        float currentRightWheelSpeed;
+        float startLeftWheelSpeed;
+        float currentLeftWheelAccel;
+        float currentLeftWheelSpeed;
+        //--------------------------------
         float inputTime;
         float rightXAccel;
         float rightYAccel;
@@ -68,22 +74,20 @@ namespace PhysicsLibrary
         #endregion
 
         #region CIRCLE MOTION FUNCTIONS
-        public void SetStartingCircleConstants(float radius, float minspeed, float maxspeed, float acceleration, float drag, float ylimit)
+        public void SetStartingCircleConstants(float radius, float minspeed, float maxspeed, float minAccel, float maxAccel, float accelerationModifier)
         {
             localWheelRadius = radius;
             minWheelSpeed = minspeed;
             maxWheelSpeed = maxspeed;
-            wheelAcceleration = acceleration;
-            negativeYDrag = drag;
-            currentWheelSpeed = 0.0f;
-            rightYAccel = 0.0f;
-            leftYAccel = 0.0f;
-            rightYAccel = 0.0f;
-            leftYAccel = 0.0f;
-            rightXSpeed = 0.0f;
-            rightYSpeed = 0.0f;
-            leftXSpeed = 0.0f;
-            leftYSpeed = 0.0f;
+            minWheelAcceleration = minAccel;
+            maxWheelAcceleration = maxAccel;
+            wheelAccelerationMod = accelerationModifier;
+            startRightWheelSpeed = 0.0f;
+            currentRightWheelAccel = 0.0f;
+            currentRightWheelSpeed = 0.0f;
+            startLeftWheelSpeed = 0.0f;
+            currentLeftWheelAccel = 0.0f;
+            currentLeftWheelSpeed = 0.0f;
         }
 
         public void RightInput(KeyCode right, float currentXposition, float currentYposition, float gameTime)
@@ -92,7 +96,8 @@ namespace PhysicsLibrary
             {
                 inputTime = gameTime;
                 goingRight = true;
-                startWheelSpeed = currentWheelSpeed;
+                startRightWheelSpeed = currentRightWheelSpeed;
+                startLeftWheelSpeed = currentLeftWheelSpeed;
                 startCircXPosition = currentXposition;
                 startCircYPosition = currentYposition;
             }
@@ -100,9 +105,10 @@ namespace PhysicsLibrary
             {
                 inputTime = gameTime;
                 goingRight = false;
+                startRightWheelSpeed = currentRightWheelSpeed;
+                startLeftWheelSpeed = currentLeftWheelSpeed;
                 startCircXPosition = currentXposition;
                 startCircYPosition = currentYposition;
-                startWheelSpeed = currentWheelSpeed;
             }
         }
 
@@ -112,7 +118,8 @@ namespace PhysicsLibrary
             {
                 inputTime = gameTime;
                 goingLeft = true;
-                startWheelSpeed = currentWheelSpeed;
+                startRightWheelSpeed = currentRightWheelSpeed;
+                startLeftWheelSpeed = currentLeftWheelSpeed;
                 startCircXPosition = currentXposition;
                 startCircYPosition = currentYposition;
             }
@@ -120,9 +127,10 @@ namespace PhysicsLibrary
             {
                 inputTime = gameTime;
                 goingLeft = false;
+                startRightWheelSpeed = currentRightWheelSpeed;
+                startLeftWheelSpeed = currentLeftWheelSpeed;
                 startCircXPosition = currentXposition;
                 startCircYPosition = currentYposition;
-                startWheelSpeed = currentWheelSpeed;
             }
         }
 
@@ -132,7 +140,8 @@ namespace PhysicsLibrary
             {
                 inputTime = gameTime;
                 goingDown = true;
-                startWheelSpeed = currentWheelSpeed;
+                startRightWheelSpeed = currentRightWheelSpeed;
+                startLeftWheelSpeed = currentLeftWheelSpeed;
                 startCircXPosition = currentXposition;
                 startCircYPosition = currentYposition;
             }
@@ -140,77 +149,75 @@ namespace PhysicsLibrary
             {
                 inputTime = gameTime;
                 goingDown = false;
-                startWheelSpeed = currentWheelSpeed;
+                startRightWheelSpeed = currentRightWheelSpeed;
+                startLeftWheelSpeed = currentLeftWheelSpeed;
                 startCircXPosition = currentXposition;
                 startCircYPosition = currentYposition;
             }
         }
 
         public void CalculateSpeed(float currentTime) {
-
-            currentWheelAcceleration = 0.0f;
-
-            if (goingLeft == true || goingRight == true)
+            // Current Right Acceleration
+            if (currentRightWheelAccel < maxWheelAcceleration && goingRight == true)
             {
-                currentWheelAcceleration += wheelAcceleration;
-                Debug.Log("Accelerating");
+                currentRightWheelAccel += wheelAccelerationMod;
             }
-            //if (currentWheelSpeed > minWheelSpeed && goingLeft == false && goingRight == false)
-            //{
-            //    currentWheelAcceleration -= wheelAcceleration;
-            //   Debug.Log("Deaccelerating");
-            //}
-            if (goingDown == true)
+            if (currentRightWheelAccel > minWheelAcceleration && goingDown == true)
             {
-                currentWheelAcceleration -= negativeYDrag;
-                Debug.Log("Going Down");
+                currentRightWheelAccel -= wheelAccelerationMod;
             }
-            if (currentWheelSpeed < maxWheelSpeed || (currentWheelSpeed >= maxWheelSpeed && goingDown == true))
+            if (goingRight == false && goingDown == false)
             {
-                currentWheelSpeed = startWheelSpeed + currentWheelAcceleration * (currentTime - inputTime);
-            }
-            
-            if (currentWheelSpeed <= minWheelSpeed && goingDown == false)
-            {
-                currentWheelSpeed = minWheelSpeed;
-                currentWheelAcceleration = 0.0f;
-                Debug.Log("Lowest Speed");
+                if (currentRightWheelAccel < 0.0f)
+                {
+                    currentRightWheelAccel += wheelAccelerationMod;
+                }
+                else if (currentRightWheelAccel > 0.0f)
+                {
+                    currentRightWheelAccel -= wheelAccelerationMod;
+                }
             }
 
-            Debug.Log("Current Wheel Speed: " + currentWheelSpeed);
-
-            if (goingRight == true)
+            // Current Left Acceleration
+            if (currentLeftWheelAccel < maxWheelAcceleration && goingLeft == true)
             {
-                rightXAccel = wheelAcceleration * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
-                rightYAccel = wheelAcceleration * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
+                currentLeftWheelAccel += wheelAccelerationMod;
             }
-            else if (goingRight == false)
+            if (currentLeftWheelAccel > minWheelAcceleration && goingDown == true)
             {
-                rightXAccel = 0.0f * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
-                rightYAccel = 0.0f * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
+                currentLeftWheelAccel -= wheelAccelerationMod;
             }
-
-            if (goingLeft == true)
+            if (goingLeft == false && goingDown == false)
             {
-                leftXAccel = wheelAcceleration * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
-                leftYAccel = wheelAcceleration * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
+                if (currentLeftWheelAccel < 0.0f)
+                {
+                    currentLeftWheelAccel += wheelAccelerationMod;
+                }
+                else if (currentLeftWheelAccel > 0.0f)
+                {
+                    currentLeftWheelAccel -= wheelAccelerationMod;
+                }
             }
-            else if (goingLeft == false)
+            // Current Speeds
+            if ((currentRightWheelSpeed < maxWheelSpeed && goingRight == true) || (currentRightWheelSpeed > minWheelSpeed && goingDown == true) || (goingRight == false && goingDown == false))
             {
-                leftXAccel = 0.0f * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
-                leftYAccel = 0.0f * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
-            }
-
-            if (goingDown)
-            {
-                rightYAccel -= negativeYDrag * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
-                leftYAccel -= negativeYDrag * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
+                currentRightWheelSpeed = startRightWheelSpeed + currentRightWheelAccel * (currentTime - inputTime);
             }
 
-            rightXSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
-            rightYSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
-            leftXSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
-            leftYSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
+            if ((currentLeftWheelSpeed < maxWheelSpeed && goingLeft == true) || (currentLeftWheelSpeed > minWheelSpeed && goingDown == true) || (goingLeft == false && goingDown == false))
+            {
+                currentLeftWheelSpeed = startLeftWheelSpeed + currentLeftWheelAccel * (currentTime - inputTime);
+            }
+            //-----------------------------------------------------------------------------------------------------------------
+            rightXAccel = currentRightWheelAccel * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
+            rightYAccel = currentRightWheelAccel * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
+            leftXAccel = currentLeftWheelAccel * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
+            leftYAccel = currentLeftWheelAccel * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
+
+            rightXSpeed = (currentRightWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
+            rightYSpeed = (currentRightWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
+            leftXSpeed = (currentLeftWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
+            leftYSpeed = (currentLeftWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
         }
 
         public float GetCircularXMovement(float currentXPosition, float currentTime)

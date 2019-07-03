@@ -7,8 +7,9 @@ public class CircularController : MonoBehaviour
 {
     [SerializeField] private float maxRotationSpeed;
     [SerializeField] private float minRotationSpeed;
-    [SerializeField] private float wheelAcceleration;
-    [SerializeField] private float yDrag;
+    [SerializeField] private float maxWheelAcceleration;
+    [SerializeField] private float minWheelAcceleration;
+    [SerializeField] private float wheelAccelModifier;
     [SerializeField] private float lowerYLimit;
     [SerializeField] private float wheelRadius;
 
@@ -39,7 +40,7 @@ public class CircularController : MonoBehaviour
 
         customController = new PhysicsClass();
 
-        customController.SetStartingCircleConstants(wheelRadius, minRotationSpeed, maxRotationSpeed, wheelAcceleration, yDrag, lowerYLimit);
+        customController.SetStartingCircleConstants(wheelRadius, minRotationSpeed, maxRotationSpeed, minWheelAcceleration, maxWheelAcceleration, wheelAccelModifier);
         displacementVector = transform.position;
     }
     
