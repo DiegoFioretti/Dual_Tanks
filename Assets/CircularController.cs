@@ -45,11 +45,12 @@ public class CircularController : MonoBehaviour
     
     void Update()
     {
-        customController.LeftInput(KeyCode.LeftArrow, transform.position.x, transform.position.y, Time.time);
-        customController.RightInput(KeyCode.RightArrow, transform.position.x, transform.position.y, Time.time);
+        customController.LeftInput(KeyCode.LeftArrow, displacementVector.x, displacementVector.y, Time.time);
+        customController.RightInput(KeyCode.RightArrow, displacementVector.x, displacementVector.y, Time.time);
+        customController.DownInput(KeyCode.DownArrow, displacementVector.x, displacementVector.y, Time.time);
         customController.CalculateSpeed(Time.time);
-        displacementVector.x = customController.GetCircularXMovement(transform.position.x, Time.time);
-        displacementVector.y = customController.GetCircularYMovement(transform.position.y, Time.time);
+        displacementVector.x = customController.GetCircularXMovement(displacementVector.x, Time.time);
+        displacementVector.y = customController.GetCircularYMovement(displacementVector.y, Time.time);
 
         if (displacementVector.x > camright)
         {

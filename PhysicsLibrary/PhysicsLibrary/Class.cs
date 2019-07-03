@@ -131,7 +131,7 @@ namespace PhysicsLibrary
             if (Input.GetKeyDown(down) && goingDown != true)
             {
                 inputTime = gameTime;
-                goingRight = true;
+                goingDown = true;
                 startWheelSpeed = currentWheelSpeed;
                 startCircXPosition = currentXposition;
                 startCircYPosition = currentYposition;
@@ -139,74 +139,66 @@ namespace PhysicsLibrary
             else if (Input.GetKeyUp(down) && goingDown == true)
             {
                 inputTime = gameTime;
-                goingRight = false;
+                goingDown = false;
+                startWheelSpeed = currentWheelSpeed;
                 startCircXPosition = currentXposition;
                 startCircYPosition = currentYposition;
-                startWheelSpeed = currentWheelSpeed;
             }
         }
 
         public void CalculateSpeed(float currentTime) {
-            if (currentWheelSpeed < maxWheelSpeed && (goingLeft == true || goingRight == true))
-            {
-                currentWheelSpeed = startWheelSpeed + (wheelAcceleration - negativeYDrag) * (currentTime - inputTime);
-            }
-            if (currentWheelSpeed > minWheelSpeed && goingLeft == false && goingRight == false)
-            {
-                currentWheelSpeed = startWheelSpeed - wheelAcceleration * (currentTime - inputTime);
-            }
 
-            /*if (currentWheelSpeed > maxWheelSpeed)
+            currentWheelAcceleration = 0.0f;
+
+            if (goingLeft == true || goingRight == true)
             {
-                currentWheelSpeed = maxWheelSpeed;
+                currentWheelAcceleration += wheelAcceleration;
+                Debug.Log("Accelerating");
             }
-            if (currentWheelSpeed < minWheelSpeed)
+            //if (currentWheelSpeed > minWheelSpeed && goingLeft == false && goingRight == false)
+            //{
+            //    currentWheelAcceleration -= wheelAcceleration;
+            //   Debug.Log("Deaccelerating");
+            //}
+            if (goingDown == true)
+            {
+                currentWheelAcceleration -= negativeYDrag;
+                Debug.Log("Going Down");
+            }
+            if (currentWheelSpeed < maxWheelSpeed || (currentWheelSpeed >= maxWheelSpeed && goingDown == true))
+            {
+                currentWheelSpeed = startWheelSpeed + currentWheelAcceleration * (currentTime - inputTime);
+            }
+            
+            if (currentWheelSpeed <= minWheelSpeed && goingDown == false)
             {
                 currentWheelSpeed = minWheelSpeed;
-            }*/
+                currentWheelAcceleration = 0.0f;
+                Debug.Log("Lowest Speed");
+            }
 
-            //rightXSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
-            //rightYSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
-
-            //leftXSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
-            //leftYSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
-
-            Debug.Log(currentWheelSpeed);
+            Debug.Log("Current Wheel Speed: " + currentWheelSpeed);
 
             if (goingRight == true)
             {
                 rightXAccel = wheelAcceleration * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
                 rightYAccel = wheelAcceleration * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
-
-                //rightXSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
-                //rightYSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
             }
             else if (goingRight == false)
             {
-                //rightXAccel = - (wheelAcceleration * Mathf.Cos(Mathf.PI * 1.0f / 4.0f));
-                //rightYAccel = - (wheelAcceleration * Mathf.Sin(Mathf.PI * 1.0f / 4.0f));
                 rightXAccel = 0.0f * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
                 rightYAccel = 0.0f * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
-
-                //rightXSpeed = 0.0f * Mathf.Cos(Mathf.PI * 1.0f / 4.0f); //(currentWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
-                //rightYSpeed = 0.0f * Mathf.Sin(Mathf.PI * 1.0f / 4.0f); //(currentWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
             }
 
             if (goingLeft == true)
             {
                 leftXAccel = wheelAcceleration * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
                 leftYAccel = wheelAcceleration * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
-                //leftXSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
-                //leftYSpeed = (currentWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
             }
             else if (goingLeft == false)
             {
-                //leftXAccel = - (wheelAcceleration * Mathf.Cos(Mathf.PI * 3.0f / 4.0f));
-                //leftYAccel = - (wheelAcceleration * Mathf.Sin(Mathf.PI * 3.0f / 4.0f));
                 leftXAccel = 0.0f * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
                 leftYAccel = 0.0f * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
-                //leftXSpeed = 0.0f * Mathf.Cos(Mathf.PI * 3.0f / 4.0f); //(currentWheelSpeed * localWheelRadius) * Mathf.Cos(Mathf.PI * 3.0f / 4.0f);
-                //leftYSpeed = 0.0f * Mathf.Sin(Mathf.PI * 3.0f / 4.0f); //(currentWheelSpeed * localWheelRadius) * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
             }
 
             if (goingDown)
@@ -230,12 +222,6 @@ namespace PhysicsLibrary
 
         public float GetCircularYMovement(float currentYPosition, float currentTime)
         {
-            /*if (currentYPosition >= lowerYLimit)
-            {
-                rightYAccel -= negativeYDrag * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
-                leftYAccel -= negativeYDrag * Mathf.Sin(Mathf.PI * 3.0f / 4.0f);
-            }*/
-
             newCircularYPosition = startCircYPosition + ((rightYSpeed + leftYSpeed) * (currentTime - inputTime)) + ((1.0f / 2.0f) * (rightYAccel + leftYAccel) * ((currentTime - inputTime) * (currentTime - inputTime)));
 
             return newCircularYPosition;
