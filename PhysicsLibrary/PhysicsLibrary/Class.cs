@@ -82,7 +82,7 @@ namespace PhysicsLibrary
             maxWheelSpeed = maxspeed;
             minWheelAcceleration = minAccel;
             maxWheelAcceleration = maxAccel;
-            defaultFriction = maxAccel / 2.0f;
+            defaultFriction = maxAccel * (1.0f / 3.0f);
             wheelAccelerationMod = accelerationModifier;
             startRightWheelSpeed = 0.0f;
             currentRightWheelAccel = 0.0f;
@@ -159,6 +159,9 @@ namespace PhysicsLibrary
         }
 
         public void CalculateSpeed(float currentTime) {
+            // Use clamps for setting max and min speeds
+            // use the numbers signs (pos or neg) to know which direction the friction goes
+
             // Current Right Acceleration---------------------------------------------------------------------------------------
             if (currentRightWheelAccel < maxWheelAcceleration && goingRight == true)
             {
@@ -240,7 +243,7 @@ namespace PhysicsLibrary
                 {
                     if (currentRightWheelSpeed < 0.0f)
                     {
-                        currentRightWheelSpeed = startRightWheelSpeed - currentRightWheelAccel * (currentTime - inputTime);
+                        currentRightWheelSpeed = startRightWheelSpeed + defaultFriction * (currentTime - inputTime);
                         if (currentRightWheelSpeed > 0.0f)
                         {
                             currentRightWheelSpeed = 0.0f;
@@ -248,14 +251,14 @@ namespace PhysicsLibrary
                     }
                     else if (currentRightWheelSpeed > 0.0f)
                     {
-                        currentRightWheelSpeed = startRightWheelSpeed - currentRightWheelAccel * (currentTime - inputTime);
+                        currentRightWheelSpeed = startRightWheelSpeed - defaultFriction * (currentTime - inputTime);
                         if (currentRightWheelSpeed < 0.0f)
                         {
                             currentRightWheelSpeed = 0.0f;
                         }
                     }
                 }
-                else if (currentRightWheelSpeed != 0.0f)
+                else if (currentRightWheelAccel != 0.0f)
                 {
                     currentRightWheelSpeed = startRightWheelSpeed + currentRightWheelAccel * (currentTime - inputTime);
                     if (currentRightWheelSpeed > maxWheelSpeed)
@@ -275,7 +278,7 @@ namespace PhysicsLibrary
                 {
                     if (currentLeftWheelSpeed < 0.0f)
                     {
-                        currentLeftWheelSpeed = startLeftWheelSpeed - currentLeftWheelAccel * (currentTime - inputTime);
+                        currentLeftWheelSpeed = startLeftWheelSpeed + defaultFriction * (currentTime - inputTime);
                         if (currentLeftWheelSpeed > 0.0f)
                         {
                             currentLeftWheelSpeed = 0.0f;
@@ -283,14 +286,14 @@ namespace PhysicsLibrary
                     }
                     else if (currentLeftWheelSpeed > 0.0f)
                     {
-                        currentLeftWheelSpeed = startLeftWheelSpeed - currentLeftWheelAccel * (currentTime - inputTime);
+                        currentLeftWheelSpeed = startLeftWheelSpeed - defaultFriction * (currentTime - inputTime);
                         if (currentLeftWheelSpeed < 0.0f)
                         {
                             currentLeftWheelSpeed = 0.0f;
                         }
                     }
                 }
-                else if (currentLeftWheelSpeed != 0.0f)
+                else if (currentLeftWheelAccel != 0.0f)
                 {
                     currentLeftWheelSpeed = startLeftWheelSpeed + currentLeftWheelAccel * (currentTime - inputTime);
                     if (currentLeftWheelSpeed > maxWheelSpeed)
