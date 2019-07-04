@@ -142,11 +142,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb9fcc0182894fd448eefc14f2fb72a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxRotationSpeed: 3
+  maxRotationSpeed: 5
   minRotationSpeed: 0
   maxWheelAcceleration: 3
   minWheelAcceleration: -3
-  wheelAccelModifier: 0.1
+  wheelAccelModifier: 0.5
   lowerYLimit: -3
   wheelRadius: 0.1
 --- !u!212 &312841440

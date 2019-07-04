@@ -33,6 +33,7 @@ namespace PhysicsLibrary
         float startLeftWheelSpeed;
         float currentLeftWheelAccel;
         float currentLeftWheelSpeed;
+        float defaultFriction;
         //--------------------------------
         float inputTime;
         float rightXAccel;
@@ -81,6 +82,7 @@ namespace PhysicsLibrary
             maxWheelSpeed = maxspeed;
             minWheelAcceleration = minAccel;
             maxWheelAcceleration = maxAccel;
+            defaultFriction = maxAccel / 2.0f;
             wheelAccelerationMod = accelerationModifier;
             startRightWheelSpeed = 0.0f;
             currentRightWheelAccel = 0.0f;
@@ -157,57 +159,152 @@ namespace PhysicsLibrary
         }
 
         public void CalculateSpeed(float currentTime) {
-            // Current Right Acceleration
+            // Current Right Acceleration---------------------------------------------------------------------------------------
             if (currentRightWheelAccel < maxWheelAcceleration && goingRight == true)
             {
                 currentRightWheelAccel += wheelAccelerationMod;
+                if (currentRightWheelAccel > maxWheelAcceleration)
+                {
+                    currentRightWheelAccel = maxWheelAcceleration;
+                }
             }
             if (currentRightWheelAccel > minWheelAcceleration && goingDown == true)
             {
                 currentRightWheelAccel -= wheelAccelerationMod;
+                if (currentRightWheelAccel < minWheelAcceleration)
+                {
+                    currentRightWheelAccel = minWheelAcceleration;
+                }
             }
-            if (goingRight == false && goingDown == false)
+            if (goingRight == false && goingDown == false && currentRightWheelAccel != 0.0f)
             {
                 if (currentRightWheelAccel < 0.0f)
                 {
                     currentRightWheelAccel += wheelAccelerationMod;
+                    if (currentRightWheelAccel > 0.0f)
+                    {
+                        currentRightWheelAccel = 0.0f;
+                    }
                 }
                 else if (currentRightWheelAccel > 0.0f)
                 {
                     currentRightWheelAccel -= wheelAccelerationMod;
+                    if (currentRightWheelAccel < 0.0f)
+                    {
+                        currentRightWheelAccel = 0.0f;
+                    }
                 }
             }
 
-            // Current Left Acceleration
+            // Current Left Acceleration---------------------------------------------------------------------------------------
             if (currentLeftWheelAccel < maxWheelAcceleration && goingLeft == true)
             {
                 currentLeftWheelAccel += wheelAccelerationMod;
+                if (currentLeftWheelAccel > maxWheelAcceleration)
+                {
+                    currentLeftWheelAccel = maxWheelAcceleration;
+                }
             }
             if (currentLeftWheelAccel > minWheelAcceleration && goingDown == true)
             {
                 currentLeftWheelAccel -= wheelAccelerationMod;
+                if (currentLeftWheelAccel < minWheelAcceleration)
+                {
+                    currentLeftWheelAccel = minWheelAcceleration;
+                }
             }
-            if (goingLeft == false && goingDown == false)
+            if (goingLeft == false && goingDown == false && currentLeftWheelAccel != 0.0f)
             {
                 if (currentLeftWheelAccel < 0.0f)
                 {
                     currentLeftWheelAccel += wheelAccelerationMod;
+                    if (currentLeftWheelAccel > 0.0f)
+                    {
+                        currentLeftWheelAccel = 0.0f;
+                    }
                 }
                 else if (currentLeftWheelAccel > 0.0f)
                 {
                     currentLeftWheelAccel -= wheelAccelerationMod;
+                    if (currentLeftWheelAccel < 0.0f)
+                    {
+                        currentLeftWheelAccel = 0.0f;
+                    }
                 }
             }
-            // Current Speeds
+            
+            // Current Speeds--------------------------------------------------------------------------------------------------
             if ((currentRightWheelSpeed < maxWheelSpeed && goingRight == true) || (currentRightWheelSpeed > minWheelSpeed && goingDown == true) || (goingRight == false && goingDown == false))
             {
-                currentRightWheelSpeed = startRightWheelSpeed + currentRightWheelAccel * (currentTime - inputTime);
+                if (goingRight == false && goingDown == false && currentRightWheelSpeed != 0.0f)
+                {
+                    if (currentRightWheelSpeed < 0.0f)
+                    {
+                        currentRightWheelSpeed = startRightWheelSpeed - currentRightWheelAccel * (currentTime - inputTime);
+                        if (currentRightWheelSpeed > 0.0f)
+                        {
+                            currentRightWheelSpeed = 0.0f;
+                        }
+                    }
+                    else if (currentRightWheelSpeed > 0.0f)
+                    {
+                        currentRightWheelSpeed = startRightWheelSpeed - currentRightWheelAccel * (currentTime - inputTime);
+                        if (currentRightWheelSpeed < 0.0f)
+                        {
+                            currentRightWheelSpeed = 0.0f;
+                        }
+                    }
+                }
+                else if (currentRightWheelSpeed != 0.0f)
+                {
+                    currentRightWheelSpeed = startRightWheelSpeed + currentRightWheelAccel * (currentTime - inputTime);
+                    if (currentRightWheelSpeed > maxWheelSpeed)
+                    {
+                        currentRightWheelSpeed = maxWheelSpeed;
+                    }
+                    else if (currentRightWheelSpeed < minWheelSpeed)
+                    {
+                        currentRightWheelSpeed = minWheelSpeed;
+                    }
+                }
             }
 
             if ((currentLeftWheelSpeed < maxWheelSpeed && goingLeft == true) || (currentLeftWheelSpeed > minWheelSpeed && goingDown == true) || (goingLeft == false && goingDown == false))
             {
-                currentLeftWheelSpeed = startLeftWheelSpeed + currentLeftWheelAccel * (currentTime - inputTime);
+                if (goingLeft == false && goingDown == false && currentLeftWheelSpeed != 0.0f)
+                {
+                    if (currentLeftWheelSpeed < 0.0f)
+                    {
+                        currentLeftWheelSpeed = startLeftWheelSpeed - currentLeftWheelAccel * (currentTime - inputTime);
+                        if (currentLeftWheelSpeed > 0.0f)
+                        {
+                            currentLeftWheelSpeed = 0.0f;
+                        }
+                    }
+                    else if (currentLeftWheelSpeed > 0.0f)
+                    {
+                        currentLeftWheelSpeed = startLeftWheelSpeed - currentLeftWheelAccel * (currentTime - inputTime);
+                        if (currentLeftWheelSpeed < 0.0f)
+                        {
+                            currentLeftWheelSpeed = 0.0f;
+                        }
+                    }
+                }
+                else if (currentLeftWheelSpeed != 0.0f)
+                {
+                    currentLeftWheelSpeed = startLeftWheelSpeed + currentLeftWheelAccel * (currentTime - inputTime);
+                    if (currentLeftWheelSpeed > maxWheelSpeed)
+                    {
+                        currentLeftWheelSpeed = maxWheelSpeed;
+                    }
+                    else if (currentLeftWheelSpeed < minWheelSpeed)
+                    {
+                        currentLeftWheelSpeed = minWheelSpeed;
+                    }
+                }
             }
+            
+            Debug.Log("Current Right Wheel Speed: " + currentRightWheelSpeed);
             //-----------------------------------------------------------------------------------------------------------------
             rightXAccel = currentRightWheelAccel * Mathf.Cos(Mathf.PI * 1.0f / 4.0f);
             rightYAccel = currentRightWheelAccel * Mathf.Sin(Mathf.PI * 1.0f / 4.0f);
